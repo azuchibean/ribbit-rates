@@ -20,4 +20,10 @@ router.get('/', async(req, res, next) => {
 
 });
 
+/* get main page*/
+router.get('/main', function(req, res,next){
+  res.render('main')
+});
+
+
 module.exports = router;
