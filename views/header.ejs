@@ -13,37 +13,39 @@
 </head>
 
 <body>
-    <div>
-        <div class="container">
-            <header class="d-flex flex-wrap justify-content-center py-3 mb-4">
+    <div class="container">
+        <header class="d-flex flex-wrap justify-content-center py-3 mb-4">
+            <!--logo-->
+            <a href="/main"
+                class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+                <img class="bi me-2" width="40" height="32"> <!--logo-->
+                <span class="fs-4">money</span> <!--project name-->
+            </a>
 
-                <!--logo-->
-                <a href="/main"
-                    class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-                    <img class="bi me-2" width="40" height="32"> <!--logo-->
-                    <span class="fs-4">money</span> <!--project name-->
+            <!--navbar links-->
+            <ul class="nav flex-fill justify-content-center gap-5">
+                <li><a href="#" class="nav-link px-2 link-body-emphasis">link1</a></li>
+                <li><a href="#" class="nav-link px-2 link-body-emphasis">link2</a></li>
+                <li><a href="#" class="nav-link px-2 link-body-emphasis">Forex Locations</a></li>
+            </ul>
+
+            <!--profile-->
+            <div class="dropdown text-end">
+                <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="/images/temple.jpg" alt="mdo" width="32" height="32" class="rounded-circle">
                 </a>
-
-                <!--navbar links-->
-                <ul class="nav flex-fill justify-content-center gap-5" style="margin-right:60px">
-                    <li><a href="#" class="nav-link px-2 link-body-emphasis">link1</a></li>
-                    <li><a href="#" class="nav-link px-2 link-body-emphasis">link2</a></li>
-                    <li><a href="#" class="nav-link px-2 link-body-emphasis">Forex Locations</a></li>
+                <ul class="dropdown-menu text-small">
+                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="/">Sign out</a></li>
                 </ul>
+            </div>
+        </header>
+    </div>
 
-                <!--profile-->
-                <div class="dropdown text-end">
-                    <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="/images/temple.jpg" alt="mdo" width="32" height="32" class="rounded-circle">
-                    </a>
-                    <ul class="dropdown-menu text-small">
-                        <li><a class="dropdown-item" href="#">Profile</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="/">Sign out</a></li>
-                    </ul>
-                </div>
-            </header>
-        </div>
+
+    <div class="content">
+        
