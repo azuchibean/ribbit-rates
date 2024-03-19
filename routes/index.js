@@ -3,7 +3,13 @@ var express = require('express');
 var router = express.Router();
 const axios = require('axios');
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
-
+const AWS = require('aws-sdk'); // Store preferences in DynamoDB
+  // Configure AWS SDK
+  AWS.config.update({
+    region: process.env.AWS_REGION,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+  });
 
 const poolData = {
   UserPoolId: process.env.COGNITO_USER_POOL_ID,
@@ -56,6 +62,7 @@ router.post('/signup', (req, res) => {
           return;
       }
       console.log('Signup success:', result);
+      req.session.email = email; // Store email in session
       res.redirect('/confirm'); // Redirect to the confirmation page
   });
 });
@@ -102,12 +109,12 @@ router.post('/login', (req, res) => {
 });
 
 router.get('/confirm', (req, res) => {
-  res.render('confirm');
+  const email = req.session.email; // Retrieve email from session
+  res.render('confirm', { email: email });
 });
 
-
 router.post('/confirm', (req, res) => {
-  const { username, code } = req.body;
+  const { username, code } = req.body; // Username is now passed as a hidden field
 
   const userData = {
       Username: username,
@@ -116,15 +123,57 @@ router.post('/confirm', (req, res) => {
 
   const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
 
-  cognitoUser.confirmRegistration(code, true, (err, result) =>  {
+  cognitoUser.confirmRegistration(code, true, (err, result) => {
       if (err) {
           console.error(err);
-          res.status(400).render('confirm', { errorMessage: err.message });
+          res.status(400).render('confirm', { email: username, errorMessage: err.message });
           return;
       }
       console.log('Account confirmed:', result);
-      res.redirect('/login'); // Redirect to the login page after successful confirmation
+      res.redirect('/preferences'); // Redirect to preferences page after successful confirmation
   });
+});
+
+
+router.get('/preferences', (req, res) => {
+  const currencies = [
+      { code: 'USD', name: 'United States Dollar' },
+      { code: 'EUR', name: 'Euro' },
+      { code: 'JPY', name: 'Japanese Yen' },
+      // Add more currencies as needed
+  ];
+
+  res.render('preferences', { currencies: currencies });
+});
+
+
+
+router.post('/preferences', async (req, res) => {
+  const email = req.session.email; // Retrieve email from session
+
+  const { fromCurrency, toCurrency, threshold } = req.body;
+ 
+
+  const docClient = new AWS.DynamoDB.DocumentClient();
+
+   const params = {
+        TableName: 'UserCurrency',
+        Item: {
+            email: email, // Primary key
+            fromCurrency: fromCurrency,
+            toCurrency: toCurrency,
+            threshold: parseFloat(threshold)
+        }
+    };
+
+  try {
+      await docClient.put(params).promise();
+      console.log('Preferences saved:', params.Item);
+      res.redirect('/login'); // Redirect to the main page
+  } catch (err) {
+      console.error('Error saving preferences:', err);
+      res.status(500).render('preferences', { errorMessage: 'Error saving preferences. Please try again.' });
+  }
 });
 
 

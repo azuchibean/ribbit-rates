@@ -6,11 +6,13 @@
 <body>
     <h2>Confirm Account</h2>
     <form action="/confirm" method="post">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br><br>
+        <input type="hidden" name="username" value="<%= email %>"> <!-- Hidden email field -->
         <label for="code">Verification Code:</label>
         <input type="text" id="code" name="code" required><br><br>
         <button type="submit">Confirm</button>
     </form>
+    <% if (typeof errorMessage !== 'undefined') { %>
+        <p style="color: red;"><%= errorMessage %></p>
+    <% } %>
 </body>
 </html>

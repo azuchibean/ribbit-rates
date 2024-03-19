@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Set Preferences</title>
+</head>
+<body>
+    <h2>Set Your Preferences</h2>
+    <form action="/preferences" method="post">
+        <label for="fromCurrency">From Currency:</label>
+        <select id="fromCurrency" name="fromCurrency" required>
+            <% currencies.forEach(function(currency) { %>
+                <option value="<%= currency.code %>"><%= currency.name %> (<%= currency.code %>)</option>
+            <% }); %>
+        </select><br><br>
+        
+        <label for="toCurrency">To Currency:</label>
+        <select id="toCurrency" name="toCurrency" required>
+            <% currencies.forEach(function(currency) { %>
+                <option value="<%= currency.code %>"><%= currency.name %> (<%= currency.code %>)</option>
+            <% }); %>
+        </select><br><br>
+        
+        <label for="threshold">Threshold:</label>
+        <input type="number" id="threshold" name="threshold" step="0.0000000001" required><br><br>
+   
+        <button type="submit">Save Preferences</button>
+    </form>
+</body>
+</html>
