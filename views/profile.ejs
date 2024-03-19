@@ -1,61 +1,97 @@
 <%- include('header.ejs') %>
 
-    <div class="container">
+    <div class="container mt-5 pt-5">
         <div class="row justify-content-center">
             <div class="col-md-5">
+
                 <div class="form-container">
                     <h3 class="text-center">Profile Settings</h3>
                     <br />
                     <div class="form-group">
                         <label for="email">Email address:</label>
-                        <span id="email"><%= email %></span> <!--retrieve email of currently logged in user-->
+                        <span id="email">
+                            <%= email %>
+                        </span> <!--retrieve email of currently logged in user-->
                     </div>
 
-                    
-                    <form>
-                        <!--notification checkbox-->
+                    <hr class="my-4">
+
+                    <!--create alert-->
+                    <div>
+                        <h3>Create Alerts</h3>
+                        <p>Create a new alert when a currency exchange pair hits a target exchange rate</p>
+                        <button id="createAlertButton" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#createAlertModal">Create New Alert</button>
+                    </div>
+
+                    <br />
+                    <!-- List of alerts -->
+                    <div id="alertList">
+                        <h3> Your Rate Alerts</h3>
+                        <div id="alertItems"></div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+        <!--modal-->
+        <div class="modal fade" id="createAlertModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Create new alert</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <small class="form-text text-muted">Example: To create a new alert for when you want to be
+                            notified when 1 <em>USD</em> =
+                            <em>1.25 CAD</em>, select USD in the 'From' dropdown and CAD in the 'To' dropdown, then
+                            enter <em>1.25</em> in the text box.</small>
+
+                        <div class="form-group mt-3"></div>
+
                         <div class="form-group">
-                            <label for="notification">Receive notifications</label>
-                            <p>Get notified when a currency hits a target exchange rate</p>
-                            <span><input type="checkbox" id="notification" name="notification"
-                                    onchange="toggleAdditionalForms()">By email</span> <!--retrieve boolean-->
+                            <label for="fromCurrency">From Currency:</label>
+                            <select class="form-control" id="fromCurrency">
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                                <option value="GBP">GBP</option>
+                                <!-- Add more currency options here -->
+                            </select>
                         </div>
-
-                        <!--currencies of interest-->
-
-                        <div class="additional-forms" style="display:none">
-                            <div class="form-group row">
-                                <label for="target_rate">Currency of interest</label>
-                                <span class="row">
-                                    <select id="target_rate_from" name="target_rate_from" class="col-3" >
-                                        <option value="USD">CAD</option>
-                                        <option value="EUR">EUR</option>
-                                        <option value="GBP">USD</option>
-                                    </select>
-                                    <p class="col-1">to</p>
-                                    <select id="target_rate_to" name="target_rate_to" class="col-3" >
-                                        <option value="USD">JPY</option>
-                                        <option value="EUR">EUR</option>
-                                        <option value="GBP">USD</option>
-                                    </select>
-                                </span>
-                            </div>
-
-                            <p id="currenciesList"></p>
+                        <div class="form-group">
+                            <label for="toCurrency">To Currency:</label>
+                            <select class="form-control" id="toCurrency">
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                                <option value="GBP">GBP</option>
+                                <!-- Add more currency options here -->
+                            </select>
                         </div>
-
-                        <hr class="my-4"> 
-                        <!--save button-->
-                        <div class="form-group text-center">
-                            <button type="submit" class="btn btn-primary">Save</button>
+                        <div class="form-group">
+                            <label for="targetRate">Target Exchange Rate:</label>
+                            <input type="text" class="form-control" id="targetRate"
+                                placeholder="Enter target exchange rate">
                         </div>
-                    </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="createAlert()">Create alert</button>
+                    </div>
                 </div>
             </div>
         </div>
 
+        <form action="/verify-email" method="post">
+            <button type="submit">Send Email</button>
+        </form>
+        
+
     </div> <!--container div-->
 
-    <script src="javascript/profile.js"></script>
+    <script src="../javascript/profile.js"></script>
 
     <%- include('footer.ejs') %>

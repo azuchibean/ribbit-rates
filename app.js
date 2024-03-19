@@ -10,6 +10,7 @@ require('dotenv').config();
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
+
 var app = express();
 
 app.use(session({
@@ -53,7 +54,7 @@ app.use(function(err, req, res, next) {
 
 
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });

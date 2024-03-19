@@ -1,4 +1,4 @@
-/node-modules
+/node_modules
 package-lock.json
 .env
 EXCHANGE_RATE_KEY = "50388613952ff0cb1e780089"
