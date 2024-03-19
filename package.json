@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "aws-sdk": "^2.1580.0",
     "axios": "^1.6.8",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
