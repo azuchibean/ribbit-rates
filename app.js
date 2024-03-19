@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var { readAllDates } = require('./db');
 
 require('dotenv').config();
 
@@ -23,6 +24,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
+app.get('/api/table', async (req, res, next) => {
+  try {
+    const result = await readAllDates();
+    console.log(result)
+    res.json(result);
+  } catch (error) {
+    next(error); // Pass error to the error handler
+  }
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

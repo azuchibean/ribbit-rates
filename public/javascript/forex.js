@@ -1,18 +1,19 @@
-const axios = require('axios');
-const apiKey = process.env.EXCHANGE_RATE_KEY;
+document.getElementById("fetchButton").addEventListener("click", async () => {
+  try {
+      const response = await axios.get(`http://localhost:3000/api/table`);
 
-async function getExchangeRate() {
-
-    const fromCurrency = document.getElementById(currency-from)
-    const toCurrency = document.getElementById(currency-to)
-
-    try {
-        const response = await axios.get(`https://v6.exchangerate-api.com/v6/${apiKey}/pair/${fromCurrency}/${toCurrency}`)
-        const responseData = response.data;
-        const conversionRate = responseData.conversion_rate;
-        const lastUpdate = responseData.time_last_update_utc;
-        
-      } catch (error) {
-        console.error(error)
+      if (response.status !== 200) {
+          throw new Error('Failed to fetch data');
       }
-}
+
+      const tasks = response.data;
+      console.log(tasks);
+
+      // Update the content of the dataContainer with the response data
+      document.getElementById("result").innerText = JSON.stringify(tasks);
+  } catch (error) {
+      console.error(error);
+      // Handle error appropriately, e.g., display an error message
+      alert('Error fetching data');
+  }
+});

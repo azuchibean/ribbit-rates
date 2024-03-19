@@ -2,28 +2,33 @@ var express = require('express');
 var router = express.Router();
 const axios = require('axios');
 
-const apiKey = process.env.EXCHANGE_RATE_KEY;
 
 /* GET home page. */
-router.get('/', async(req, res, next) => {
-
+router.get('/', async (req, res, next) => {
   try {
-    const response = await axios.get(`https://v6.exchangerate-api.com/v6/${apiKey}/pair/CAD/JPY`)
-    const responseData = response.data;
-    const conversionRate = responseData.conversion_rate;
-    const lastUpdate = responseData.time_last_update_utc;
-    res.render('index', { title: 'Express' , lastUpdate: lastUpdate, conversionRate: conversionRate});
+    // Make an HTTP request to the backend API endpoint
+    const response = await axios.get(`http://localhost:3000/api/table`);
+    console.log("after await")
+
+    // Check if the response was successful
+    if (response.status !== 200) {
+      throw new Error('Failed to fetch datas');
+    }
+
+    const tasks = response.data;
+
+    // Render the index page with the retrieved data
+    res.render('index', { title: 'Express'});
   } catch (error) {
-    console.error(error)
+    // Handle errors
+    console.error(error);
     res.status(500).send('Error fetching data');
   }
-
 });
 
 /* get main page*/
-router.get('/main', function(req, res,next){
+router.get('/main', function (req, res, next) {
   res.render('main')
 });
-
 
 module.exports = router;
