@@ -149,11 +149,11 @@ router.get('/profile', function (req, res, next) {
   res.render('profile', { email: email });
 })
 
-//via SES
+//via SES 
 router.post('/sendEmail', async (req, res) => {
   const userCurrencyPair = 'USD/CAD';
   const targetRate = 1.25;
-  const recipient = '98victorfung@gmail.com';
+  const recipient = 'angelayu8800@gmail.com';
   const subject = 'Target rate hit!';
   const message = `The target rate of ${targetRate} for ${userCurrencyPair} has been hit!`;
 
@@ -180,6 +180,23 @@ router.post('/sendEmail', async (req, res) => {
   }
 });
 
+//verify email with SES aka adding users to SES (once user signs up we can run this and get them to verify their email this is kinda awks cause it sends via AWS email ...)
+router.post('/verify-email', async (req, res) => {
+  const { email } = 'yuangelaa@icloud.com';
+
+  const params = {
+    EmailAddress: 'yuangelaa@icloud.com'
+  };
+
+  try {
+    await ses.verifyEmailIdentity(params).promise();
+    console.log(`Verification email sent to ${email}`);
+    res.status(200).send('Verification email sent successfully');
+  } catch (error) {
+    console.error(`Failed to send verification email to ${email}:`, error);
+    res.status(500).send('Failed to send verification email');
+  }
+});
 
 //will send email notification via SNS to ALL members (NOT THE SERVICE I WANT TO USE TBH BUT IT WORKS)
 router.post('/sendNotif', async (req, res) => {
