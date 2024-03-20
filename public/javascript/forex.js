@@ -1,19 +1,19 @@
 document.getElementById("fetchButton").addEventListener("click", async () => {
+  const fromCurrency = document.getElementById("exchange-from").value;
+  const toCurrency = document.getElementById("exchange-to").value;
+
+  // Make a POST request to the server with selected currencies
   try {
-      const response = await axios.get(`http://localhost:3000/api/table`);
+    const response = await axios.post("/query", { fromCurrency, toCurrency });
 
-      if (response.status !== 200) {
-          throw new Error('Failed to fetch data');
-      }
+    const exchangeRate = response.data.exchangeRate;
 
-      const tasks = response.data;
-      console.log(tasks);
-
-      // Update the content of the dataContainer with the response data
-      document.getElementById("result").innerText = JSON.stringify(tasks);
+    document.getElementById(
+      "result"
+    ).innerText = `Exchange rate from ${fromCurrency} to ${toCurrency}: ${exchangeRate}`;
   } catch (error) {
-      console.error(error);
-      // Handle error appropriately, e.g., display an error message
-      alert('Error fetching data');
+    console.error("Error fetching exchange rate:", error);
+    document.getElementById("result").innerText =
+      "Error fetching exchange rate";
   }
 });

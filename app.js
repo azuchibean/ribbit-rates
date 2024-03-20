@@ -3,7 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var { readAllDates } = require('./db');
+var { fetchExchangeRate } = require('./db');
 
 require('dotenv').config();
 
@@ -25,14 +25,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-app.get('/api/table', async (req, res, next) => {
-  try {
-    const result = await readAllDates();
-    console.log(result)
-    res.json(result);
-  } catch (error) {
-    next(error); // Pass error to the error handler
-  }
+app.post('/query', async (req, res) => {
+  const fromCurrency = req.body.fromCurrency;
+  const toCurrency = req.body.toCurrency;
+
+  const exchangeRate = await fetchExchangeRate(fromCurrency, toCurrency);
+
+  res.json({ exchangeRate });
 });
 
 // catch 404 and forward to error handler
