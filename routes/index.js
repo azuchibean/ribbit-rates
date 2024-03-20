@@ -28,7 +28,7 @@ router.get('/', async (req, res, next) => {
   try {
 
     // Render the index page with the retrieved data
-    res.render('index', { title: 'Express'});
+    res.render('index');
   } catch (error) {
     // Handle errors
     console.error(error);
@@ -41,14 +41,6 @@ router.get('/main', function (req, res, next) {
   res.render('main')
 
 });
-
-
-
-/* get landing page for login and sign up */
-router.get('/home', (req, res) => {
-  res.render('landing');
-});
-
 
 
 

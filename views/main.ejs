@@ -1,14 +1,36 @@
 <%- include('header.ejs') %>
+<div>
+    <p>Current exchange rate from CAD to JPY as of</p>
+    <label for="exchange-from">Choose a currency: </label>
+    <select name="exchange-from" id="exchange-from">
+      <option value="USD">USD</option>
+      <option value="CAD">CAD</option>
+    </select>
+    <br>
+    <label for="exchange-to">Choose a currency to convert to: </label>
+    <select name="exchange-from" id="exchange-to">
+      <option value="JPY">JPY</option>
+    </select>
+    <br>
+    <button id="fetchButton">Find exchange rate</button>
+    <div id="result"></div>
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Exchange Rate</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
 
-
-
-
-
-
-
-
-
-
-
+          </td>
+        </tr>
+      </tbody>
+    </table>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script type="module" src="/javascript/forex.js"></script>
 
 <%- include('footer.ejs') %>
