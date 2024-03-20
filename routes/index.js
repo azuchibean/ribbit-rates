@@ -41,13 +41,22 @@ router.get('/', async (req, res, next) => {
 });
 
 /* get main page*/
-
 router.get('/main', function (req, res, next) {
   res.render('main')
 
 });
 
 
+
+/* get landing page for login and sign up */
+router.get('/home', (req, res) => {
+  res.render('landing');
+});
+
+
+
+
+/* get sign up page */
 router.get('/signup', (req, res) => {
   res.render('signup');
 });
@@ -62,6 +71,12 @@ router.post('/signup', (req, res) => {
   userPool.signUp(email, password, attributeList, null, (err, result) => {
       if (err) {
           console.error('Signup error:', err);
+          let errorMessage = err.message;
+
+            // Check if the error is because the user already exists
+            if (err.code === 'UsernameExistsException') {
+              errorMessage = 'User already exists. Please use a different email or login.';
+          }
           res.status(400).render('signup', { errorMessage: err.message });
           return;
       }
@@ -73,8 +88,7 @@ router.post('/signup', (req, res) => {
 
 
 
-
-
+/* get login page */
 router.get('/login', (req, res) => {
   res.render('login');
 });
@@ -103,15 +117,20 @@ router.post('/login', (req, res) => {
       if (err.code === 'UserNotConfirmedException') {
         // Redirect to the confirmation page with the username pre-filled
         res.render('confirm', { username: username, errorMessage: 'Account not confirmed. Please enter the verification code sent to your email.' });
+      } else if (err.code === 'NotAuthorizedException') {
+        // Handle incorrect email or password
+        res.render('login', { errorMessage: 'Email or password is incorrect.' });
       } else {
         // Handle other errors
         console.error(err);
-        res.status(401).render('login', { errorMessage: 'Login failed. Please try again.' });
+        res.render('login', { errorMessage: 'Login failed. Please try again.' });
       }
     }
   });
 });
 
+
+/* get email verification page */
 router.get('/confirm', (req, res) => {
   const email = req.session.email; // Retrieve email from session
   res.render('confirm', { email: email });
@@ -139,11 +158,17 @@ router.post('/confirm', (req, res) => {
 });
 
 
+/* get user preference setting page */
 router.get('/preferences', (req, res) => {
   const currencies = [
       { code: 'USD', name: 'United States Dollar' },
       { code: 'EUR', name: 'Euro' },
       { code: 'JPY', name: 'Japanese Yen' },
+      { code: 'GBP', name: 'British Pound' },
+      { code: 'CAD', name: 'Canadian Dollar' },
+      { code: 'CNY', name: 'Chinese Yuan' },
+      { code: 'INR', name: 'Indian Rupee' },
+      { code: 'MXN', name: 'Mexican Peso' }
       // Add more currencies as needed
   ];
 
