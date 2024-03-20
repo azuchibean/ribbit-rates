@@ -4,6 +4,9 @@ var router = express.Router();
 const axios = require('axios');
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 const AWS = require('aws-sdk');
+const fs = require('fs');
+const path = require('path');
+
 
 
 AWS.config.update({
@@ -38,8 +41,9 @@ router.get('/', async (req, res, next) => {
 
 /* get main page*/
 router.get('/main', function (req, res, next) {
-  res.render('main')
-
+  const filePath = path.join(__dirname, '..', 'public', 'currencies.json');
+  const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  res.render('main', { currencies: data.currencies });
 });
 
 

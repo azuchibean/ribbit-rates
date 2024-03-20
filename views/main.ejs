@@ -1,15 +1,19 @@
-<%- include('header.ejs') %>
-<div>
+ <%- include('header.ejs') %>
+
+<div class="container mt-5">
     <p>Current exchange rate from CAD to JPY as of</p>
     <label for="exchange-from">Choose a currency: </label>
     <select name="exchange-from" id="exchange-from">
-      <option value="USD">USD</option>
-      <option value="CAD">CAD</option>
+      <% currencies.forEach(function(currency) { %>
+        <option value="<%= currency.code %>"><%= currency.name %> (<%= currency.code %>)</option>
+      <% }); %>
     </select>
     <br>
     <label for="exchange-to">Choose a currency to convert to: </label>
     <select name="exchange-from" id="exchange-to">
-      <option value="JPY">JPY</option>
+      <% currencies.forEach(function(currency) { %>
+        <option value="<%= currency.code %>"><%= currency.name %> (<%= currency.code %>)</option>
+      <% }); %>
     </select>
     <br>
     <button id="fetchButton">Find exchange rate</button>
