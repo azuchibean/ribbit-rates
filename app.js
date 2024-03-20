@@ -3,7 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var { fetchExchangeRate } = require('./db');
+var { fetchExchangeRate, fetchLastSevenDays } = require('./db');
 
 require('dotenv').config();
 
@@ -25,6 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
+// POST for button
 app.post('/query', async (req, res) => {
   const fromCurrency = req.body.fromCurrency;
   const toCurrency = req.body.toCurrency;
@@ -32,6 +33,16 @@ app.post('/query', async (req, res) => {
   const exchangeRate = await fetchExchangeRate(fromCurrency, toCurrency);
 
   res.json({ exchangeRate });
+});
+
+// POST for table
+app.post('/getTableData', async (req, res) => {
+  const fromCurrency = req.body.selectedOption1;
+  const toCurrency = req.body.selectedOption2;
+
+  const exchangeRates = await fetchLastSevenDays(fromCurrency, toCurrency);
+
+  res.json({ exchangeRates });
 });
 
 // catch 404 and forward to error handler
