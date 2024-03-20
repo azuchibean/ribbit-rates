@@ -60,14 +60,14 @@ router.post('/signup', (req, res) => {
   ];
 
   userPool.signUp(email, password, attributeList, null, (err, result) => {
-      if (err) {
-          console.error('Signup error:', err);
-          res.status(400).render('signup', { errorMessage: err.message });
-          return;
-      }
-      console.log('Signup success:', result);
-      req.session.email = email; // Store email in session
-      res.redirect('/confirm'); // Redirect to the confirmation page
+    if (err) {
+      console.error('Signup error:', err);
+      res.status(400).render('signup', { errorMessage: err.message });
+      return;
+    }
+    console.log('Signup success:', result);
+    req.session.email = email; // Store email in session
+    res.redirect('/confirm'); // Redirect to the confirmation page
   });
 });
 
@@ -128,23 +128,23 @@ router.post('/confirm', (req, res) => {
   const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
 
   cognitoUser.confirmRegistration(code, true, (err, result) => {
-      if (err) {
-          console.error(err);
-          res.status(400).render('confirm', { email: username, errorMessage: err.message });
-          return;
-      }
-      console.log('Account confirmed:', result);
-      res.redirect('/preferences'); // Redirect to preferences page after successful confirmation
+    if (err) {
+      console.error(err);
+      res.status(400).render('confirm', { email: username, errorMessage: err.message });
+      return;
+    }
+    console.log('Account confirmed:', result);
+    res.redirect('/preferences'); // Redirect to preferences page after successful confirmation
   });
 });
 
 
 router.get('/preferences', (req, res) => {
   const currencies = [
-      { code: 'USD', name: 'United States Dollar' },
-      { code: 'EUR', name: 'Euro' },
-      { code: 'JPY', name: 'Japanese Yen' },
-      // Add more currencies as needed
+    { code: 'USD', name: 'United States Dollar' },
+    { code: 'EUR', name: 'Euro' },
+    { code: 'JPY', name: 'Japanese Yen' },
+    // Add more currencies as needed
   ];
 
   res.render('preferences', { currencies: currencies });
@@ -156,27 +156,27 @@ router.post('/preferences', async (req, res) => {
   const email = req.session.email; // Retrieve email from session
 
   const { fromCurrency, toCurrency, threshold } = req.body;
- 
+
 
   const docClient = new AWS.DynamoDB.DocumentClient();
 
-   const params = {
-        TableName: 'UserCurrency',
-        Item: {
-            email: email, // Primary key
-            fromCurrency: fromCurrency,
-            toCurrency: toCurrency,
-            threshold: parseFloat(threshold)
-        }
-    };
+  const params = {
+    TableName: 'UserCurrency',
+    Item: {
+      email: email, // Primary key
+      fromCurrency: fromCurrency,
+      toCurrency: toCurrency,
+      threshold: parseFloat(threshold)
+    }
+  };
 
   try {
-      await docClient.put(params).promise();
-      console.log('Preferences saved:', params.Item);
-      res.redirect('/login'); // Redirect to the main page
+    await docClient.put(params).promise();
+    console.log('Preferences saved:', params.Item);
+    res.redirect('/login'); // Redirect to the main page
   } catch (err) {
-      console.error('Error saving preferences:', err);
-      res.status(500).render('preferences', { errorMessage: 'Error saving preferences. Please try again.' });
+    console.error('Error saving preferences:', err);
+    res.status(500).render('preferences', { errorMessage: 'Error saving preferences. Please try again.' });
   }
 });
 
@@ -184,13 +184,86 @@ router.post('/preferences', async (req, res) => {
 
 /*get profile page*/
 router.get('/profile', function (req, res, next) {
-  //need to retrieve data from database 
-
-
   //retrieve currently logged in user's email
-  const email = "cloud@gmail.com"
-  res.render('profile', { email: email });
+  const email = "angela@gmail.com"
+
+  //need to retrieve user's rate alerts from db
+  const docClient = new AWS.DynamoDB.DocumentClient();
+
+
+  const params = {
+    TableName: "Users",
+
+  };
+
+  docClient.scan(params, function (err, data) {
+    if (err) {
+      console.error("Unable to query. Error:", JSON.stringify(err, null, 2));
+      res.status(500).send("Error retrieving rate alerts");
+    } else {
+      const rateAlerts = data.Items || [];
+      console.log(data.Items)
+      res.render('profile', { email: email, rateAlerts: rateAlerts });
+    }
+  })
 })
+
+router.post('/profile', async (req, res, next) => {
+  const { fromCurrency, toCurrency, rateExchange, alertId } = req.body;
+
+  const email = 'angela@gmail.com';
+
+  const docClient = new AWS.DynamoDB.DocumentClient();
+
+  const params = {
+    TableName: 'Users',
+    Item: {
+      user: email,
+      alertId: alertId,
+      from: fromCurrency,
+      to: toCurrency,
+      rate: parseFloat(rateExchange)
+    }
+  };
+
+  try {
+    await docClient.put(params).promise();
+    console.log('Rate alert saved successfully');
+    res.redirect('/profile');
+  } catch (err) {
+    console.error('Error saving rate alert:', err);
+    res.status(500).send('Error saving rate alert');
+  }
+});
+
+
+router.delete('/profile/:alertId', async (req, res, next) => {
+  const { alertId } = req.params;
+  const email = 'angela@gmail.com'; // Assuming the user's email is hardcoded for this example
+
+  const docClient = new AWS.DynamoDB.DocumentClient();
+
+  const params = {
+      TableName: 'Users',
+      Key: {
+          user: email,
+          alertId: alertId
+      }
+  };
+
+  try {
+      await docClient.delete(params).promise();
+      console.log(`Alert with id ${alertId} deleted successfully`);
+      res.sendStatus(200); // Send a success response
+  } catch (err) {
+      console.error('Error deleting alert:', err);
+      res.status(500).send('Error deleting alert');
+  }
+});
+
+
+
+
 
 //via SES 
 router.post('/sendEmail', async (req, res) => {
@@ -247,23 +320,23 @@ router.post('/sendNotif', async (req, res) => {
   const body = "CASDKJASKDJ";
 
   const params = {
-      TopicArn: 'arn:aws:sns:us-west-2:533267160590:currency', // Replace with your SNS topic ARN
-      Message: JSON.stringify({
-          default: 'Custom email notification',
-          email: JSON.stringify({
-              subject: subject,
-              body: body
-          })
-      }),
-      MessageStructure: 'json'
+    TopicArn: 'arn:aws:sns:us-west-2:533267160590:currency', // Replace with your SNS topic ARN
+    Message: JSON.stringify({
+      default: 'Custom email notification',
+      email: JSON.stringify({
+        subject: subject,
+        body: body
+      })
+    }),
+    MessageStructure: 'json'
   };
 
   try {
-      await sns.publish(params).promise();
-      res.status(200).send('Email sent successfully');
+    await sns.publish(params).promise();
+    res.status(200).send('Email sent successfully');
   } catch (error) {
-      console.error('Email sending failed:', error);
-      res.status(500).send('Failed to send email');
+    console.error('Email sending failed:', error);
+    res.status(500).send('Failed to send email');
   }
 });
 

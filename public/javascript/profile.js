@@ -1,40 +1,77 @@
-function createAlert() {
-    console.log("created alert")
-    //save into database new alert (from, to, amount)
-}
+//function to add more alerts from filling out the modal 
+document.addEventListener('DOMContentLoaded', function () {
+    const alertList = document.getElementById('alertList');
+    const createAlertButton = document.querySelector('#createAlertModal button.btn-primary');
 
-//dummy data 
-const alertsData = [
-    { fromCurrency: 'USD', toCurrency: 'EUR', exchangeRate: 1.5 },
-    { fromCurrency: 'EUR', toCurrency: 'GBP', exchangeRate: 0.9 }
-];
+    createAlertButton.addEventListener('click', function () {
+        const fromCurrency = document.getElementById('fromCurrency').value;
+        const toCurrency = document.getElementById('toCurrency').value;
+        const targetRate = document.getElementById('targetRate').value;
+        const alertId = Date.now().toString();
 
-// Function to create a div item for each alert 
-function createAlertItem(alert) {
-    const alertBox = document.createElement('div');
-    alertBox.classList.add('rounded', 'border', 'p-3', 'mb-3', 'alert-item');
-    alertBox.innerHTML = `
-        <div>1 ${alert.fromCurrency} = ${alert.exchangeRate} ${alert.toCurrency}   <img src="" alt="trashcan" class="icon"></div>
-      
-    `;
-    return alertBox;
-}
+        // Create a new rate alert box
+        const alertBox = document.createElement('div');
+        alertBox.classList.add('rounded', 'border', 'p-3', 'mb-3', 'alert-item');
+        alertBox.dataset.alertId = alertId; 
+        alertBox.innerHTML = `
+            <div>1 ${fromCurrency} = ${targetRate} ${toCurrency}  <button class="delete-alert" style="border: none; background: none; cursor: pointer;">
+            <img src="../images/trashcan.png" alt="trashcan" class="icon">
+        </button>
+        `;
 
-// Function to display the list of alerts
-function displayAlerts() {
-    const alertContainer = document.getElementById('alertItems');
-    alertContainer.innerHTML = '';
-    alertsData.forEach(alert => {
-        const alertBox = createAlertItem(alert);
-        alertContainer.appendChild(alertBox);
+        // Append the new rate alert box to the alertList
+        alertList.appendChild(alertBox);
+
+        // Hide the modal
+        $('#createAlertModal').modal('hide');
+
+        // Clear the form inputs for the next alert
+        document.getElementById('fromCurrency').value = '';
+        document.getElementById('toCurrency').value = '';
+        document.getElementById('targetRate').value = '';
+
+        //send the data to the server
+        fetch('/profile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ fromCurrency, toCurrency, rateExchange: targetRate, alertId })
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Rate alert saved successfully');
+                } else {
+                    console.error('Failed to save rate alert');
+                }
+            })
+            .catch(error => {
+                console.error('Error saving rate alert:', error);
+            });
     });
-}
+});
 
-displayAlerts();
+//function to delete items from db
+document.addEventListener('DOMContentLoaded', function () {
+    const deleteButtons = document.querySelectorAll('.delete-alert');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', async function () {
+            const alertId = button.parentElement.getAttribute('data-alert-id');
+            console.log('Deleting alert with ID:', alertId);
 
-// Function to delete an alert
-function deleteAlert(alertId) {
-    // Add logic here to delete the alert from the database
-    // After deleting, update the UI by re-fetching the alertsData and calling displayAlerts()
-    console.log(`Deleting alert with ID ${alertId}`);
-}
+            try {
+                const response = await fetch(`/profile/${alertId}`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    console.log('Alert deleted successfully');
+                    window.location.reload();
+                } else {
+                    console.error('Failed to delete alert');
+                }
+            } catch (error) {
+                console.error('Error deleting alert:', error);
+            }
+        });
+    });
+}); 
