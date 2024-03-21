@@ -138,14 +138,14 @@ router.post('/login', (req, res) => {
     onFailure: (err) => {
       if (err.code === 'UserNotConfirmedException') {
         // Redirect to the confirmation page with the username pre-filled
-        res.render('confirm', { username: username, errorMessage: 'Account not confirmed. Please enter the verification code sent to your email.' });
+        res.render('confirm', { email: username, errorMessage: 'Account not confirmed. Please enter the verification code sent to your email.' });
       } else if (err.code === 'NotAuthorizedException') {
         // Handle incorrect email or password
-        res.render('login', { errorMessage: 'Email or password is incorrect.' });
+        res.render('login', { errorMessage: 'Email or password is incorrect.', message:''});
       } else {
         // Handle other errors
         console.error(err);
-        res.render('login', { errorMessage: 'Login failed. Please try again.' });
+        res.render('login', { errorMessage: 'Login failed. Please try again.', message:'' });
       }
     }
   });

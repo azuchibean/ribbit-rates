@@ -93,24 +93,32 @@ document.addEventListener('DOMContentLoaded', function () {
 //function to delete items from db
 document.addEventListener('DOMContentLoaded', function () {
     const deleteButtons = document.querySelectorAll('.delete-alert');
+    const confirmDeleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+
     deleteButtons.forEach(button => {
         button.addEventListener('click', async function () {
             const alertId = button.parentElement.getAttribute('data-alert-id');
             console.log('Deleting alert with ID:', alertId);
 
-            try {
-                const response = await fetch(`/profile/${alertId}`, {
-                    method: 'DELETE'
-                });
-                if (response.ok) {
-                    console.log('Alert deleted successfully');
-                    window.location.reload();
-                } else {
-                    console.error('Failed to delete alert');
+            confirmDeleteModal.show();
+
+            const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+            confirmDeleteButton.addEventListener('click', async function () {
+
+                try {
+                    const response = await fetch(`/profile/${alertId}`, {
+                        method: 'DELETE'
+                    });
+                    if (response.ok) {
+                        console.log('Alert deleted successfully');
+                        window.location.reload();
+                    } else {
+                        console.error('Failed to delete alert');
+                    }
+                } catch (error) {
+                    console.error('Error deleting alert:', error);
                 }
-            } catch (error) {
-                console.error('Error deleting alert:', error);
-            }
+            });
         });
     });
 }); 
