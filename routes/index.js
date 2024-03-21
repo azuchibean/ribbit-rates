@@ -218,6 +218,11 @@ router.get('/profile', function (req, res, next) {
   //retrieve currently logged in user's email
   const email = req.session.user.email
 
+  //retrieve currencies from json file
+  const filePath = path.join(__dirname, '..', 'public', 'currencies.json');
+  const currencies = JSON.parse(fs.readFileSync(filePath, 'utf8')).currencies;
+
+
   //need to retrieve user's rate alerts from db
   const docClient = new AWS.DynamoDB.DocumentClient();
 
@@ -240,7 +245,7 @@ router.get('/profile', function (req, res, next) {
     } else {
       const rateAlerts = data.Items || [];
       console.log(data.Items)
-      res.render('profile', { email: email, rateAlerts: rateAlerts });
+      res.render('profile', { email: email, rateAlerts: rateAlerts, currencies:currencies});
     }
   })
 })

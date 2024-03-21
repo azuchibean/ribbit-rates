@@ -62,22 +62,21 @@
 
                         <div class="form-group">
                             <label for="fromCurrency">From Currency:</label>
-                            <select class="form-control" id="fromCurrency">
-                                <option value="USD">USD</option>
-                                <option value="EUR">EUR</option>
-                                <option value="GBP">GBP</option>
-                                <!-- Add more currency options here -->
+                            <select class="form-control" id="fromCurrency" name="fromCurrency">
+                              <% currencies.forEach(function(currency) { %>
+                                <option value="<%= currency.code %>"><%= currency.name %> (<%= currency.code %>)</option>
+                              <% }); %>
                             </select>
-                        </div>
-                        <div class="form-group">
+                          </div>
+                          
+                          <div class="form-group">
                             <label for="toCurrency">To Currency:</label>
-                            <select class="form-control" id="toCurrency">
-                                <option value="USD">USD</option>
-                                <option value="EUR">EUR</option>
-                                <option value="GBP">GBP</option>
-                                <!-- Add more currency options here -->
+                            <select class="form-control" id="toCurrency" name="toCurrency">
+                              <% currencies.forEach(function(currency) { %>
+                                <option value="<%= currency.code %>"><%= currency.name %> (<%= currency.code %>)</option>
+                              <% }); %>
                             </select>
-                        </div>
+                          </div>
                         <div class="form-group">
                             <label for="targetRate">Target Exchange Rate:</label>
                             <input type="text" class="form-control" id="targetRate"
