@@ -1,4 +1,4 @@
- <%- include('header.ejs') %>
+<%- include('header.ejs', { title: 'Main' }) %>
 
 <div class="container mt-5">
     <p>Current exchange rate from CAD to JPY as of</p>
@@ -36,5 +36,3 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script type="module" src="/javascript/forex.js"></script>
-
-<%- include('footer.ejs') %>
