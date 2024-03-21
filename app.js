@@ -63,31 +63,33 @@ app.post('/getChart', async (req, res) => {
 
   const myChart = new QuickChart();
   myChart
-  .setConfig({
-    type: 'line',
-    data: {
-      labels: labelsArray,
-      datasets: [{ label: currencyPair, data: dataArray }],
-    },
-  })
-  .setWidth(300)
-  .setHeight(200)
-  .setBackgroundColor('transparent');
+    .setConfig({
+      type: 'line',
+      data: {
+        labels: labelsArray,
+        datasets: [{ label: currencyPair, data: dataArray, borderColor: 'rgb(144, 238, 144)', backgroundColor: 'rgba(144, 238, 144, 0.5)'
+        },],
+      },
+    })
+    .setWidth(400)
+    .setHeight(325)
+    .setBackgroundColor('transparent');
 
   const chartUrl = myChart.getUrl();
   // console.log(chartUrl);
 
   res.send(chartUrl)
 
+
 })
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -99,7 +101,7 @@ app.use(function(err, req, res, next) {
 
 const port = process.env.PORT || 4000;
 app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
+  console.log(`Server running on http://localhost:${port}`);
 });
 
 module.exports = app;

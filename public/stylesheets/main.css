@@ -1,6 +1,6 @@
 #dataTable {
     border-collapse: collapse;
-    width: 75%;
+    width: 100%;
 }
 
 /* Style for table header */
@@ -21,11 +21,15 @@ select {
 }
 
 #result {
-    margin-top: 2.5%;
-    margin-bottom: 2.5%;
+    margin-top: 3.5%;
+    margin-bottom: 3.5%;
     color: #FFFFFF;
 }
 
 #fetchButton {
-    margin-top: 2.5%;
+    margin-top: 1.5%;
+}
+
+#historicalGraph {
+    margin-left: 10%;
 }

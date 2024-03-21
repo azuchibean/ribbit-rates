@@ -2,6 +2,11 @@ document.getElementById("fetchButton").addEventListener("click", async () => {
   const fromCurrency = document.getElementById("exchange-from").value;
   const toCurrency = document.getElementById("exchange-to").value;
 
+  // Check if fromCurrency is equal to toCurrency
+  if (fromCurrency === toCurrency) {
+    return; // Exit the function early
+  }
+
   // Make a POST request to the server with selected currencies
   try {
     const response = await axios.post("/query", { fromCurrency, toCurrency });
@@ -66,6 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 
+// Gets chart from backend
 async function getChart(data) {
   const dataArray = [];
   const labelsArray = [];
@@ -91,6 +97,9 @@ async function getChart(data) {
     const response = await axios.post('/getChart', {dataArray, labelsArray, currencyPair: currentCurrencyPair} );
     const chartUrl = response.data;
 
+    const header = document.createElement('h2')
+    header.innerHTML = "Recent Trends"
+
     // Create an image element and set its source to the chart URL
     const imgElement = document.createElement('img');
     imgElement.src = chartUrl;
@@ -98,6 +107,7 @@ async function getChart(data) {
     // Append the image element to the div with id "graph"
     const graphDiv = document.getElementById('historicalGraph');
     graphDiv.innerHTML = ''; // Clear previous content
+    graphDiv.append(header)
     graphDiv.appendChild(imgElement);
 
   } catch (error) {
