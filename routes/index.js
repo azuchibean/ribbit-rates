@@ -216,18 +216,24 @@ router.get('/profile', function (req, res, next) {
     return res.redirect('/login'); // Redirect to login page if not authenticated
   }
   //retrieve currently logged in user's email
-  const email = "angela@gmail.com"
+  const email = req.session.user.email
 
   //need to retrieve user's rate alerts from db
   const docClient = new AWS.DynamoDB.DocumentClient();
 
 
-  const params = {
+  const params = { 
     TableName: "Users",
-
+    KeyConditionExpression: '#u = :u',
+    ExpressionAttributeNames: {
+      '#u': 'user'
+    },
+    ExpressionAttributeValues: {
+      ':u': email // Assuming email is the partition key value
+    }
   };
 
-  docClient.scan(params, function (err, data) {
+  docClient.query(params, function (err, data) {
     if (err) {
       console.error("Unable to query. Error:", JSON.stringify(err, null, 2));
       res.status(500).send("Error retrieving rate alerts");
@@ -242,7 +248,7 @@ router.get('/profile', function (req, res, next) {
 router.post('/profile', async (req, res, next) => {
   const { fromCurrency, toCurrency, rateExchange, alertId } = req.body;
 
-  const email = 'angela@gmail.com';
+  const email = req.session.user.email;
 
   const docClient = new AWS.DynamoDB.DocumentClient();
 
@@ -270,7 +276,7 @@ router.post('/profile', async (req, res, next) => {
 
 router.delete('/profile/:alertId', async (req, res, next) => {
   const { alertId } = req.params;
-  const email = 'angela@gmail.com'; // Assuming the user's email is hardcoded for this example
+  const email = req.session.user.email;
 
   const docClient = new AWS.DynamoDB.DocumentClient();
 
