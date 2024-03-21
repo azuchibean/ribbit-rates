@@ -71,6 +71,11 @@ router.get('/main', requireAuth, function (req, res, next) {
   res.render('main', { currencies: data.currencies });
 });
 
+router.get('/converter', requireAuth, function (req, res) {
+  const filePath = path.join(__dirname, '..', 'public', 'currencies.json');
+  const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  res.render('converter', { currencies: data.currencies });
+})
 
 
 /* get sign up page */
