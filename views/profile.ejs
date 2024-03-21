@@ -1,4 +1,4 @@
-<%- include('header.ejs') %>
+<%- include('header.ejs', { title: 'Profile' }) %>
 
     <div class="container mt-5 pt-5">
         <div class="row justify-content-center">
@@ -66,20 +66,26 @@
                         <div class="form-group">
                             <label for="fromCurrency">From Currency:</label>
                             <select class="form-control" id="fromCurrency" name="fromCurrency">
-                              <% currencies.forEach(function(currency) { %>
-                                <option value="<%= currency.code %>"><%= currency.name %> (<%= currency.code %>)</option>
-                              <% }); %>
+                                <option value="">Select currency...</option>
+                                <% currencies.forEach(function(currency) { %>
+                                    <option value="<%= currency.code %>">
+                                        <%= currency.name %> (<%= currency.code %>)
+                                    </option>
+                                    <% }); %>
                             </select>
-                          </div>
-                          
-                          <div class="form-group">
+                        </div>
+
+                        <div class="form-group">
                             <label for="toCurrency">To Currency:</label>
                             <select class="form-control" id="toCurrency" name="toCurrency">
-                              <% currencies.forEach(function(currency) { %>
-                                <option value="<%= currency.code %>"><%= currency.name %> (<%= currency.code %>)</option>
-                              <% }); %>
+                                <option value="">Select currency...</option>
+                                <% currencies.forEach(function(currency) { %>
+                                    <option value="<%= currency.code %>">
+                                        <%= currency.name %> (<%= currency.code %>)
+                                    </option>
+                                    <% }); %>
                             </select>
-                          </div>
+                        </div>
                         <div class="form-group">
                             <label for="targetRate">Target Exchange Rate:</label>
                             <input type="text" class="form-control" id="targetRate"
@@ -93,10 +99,6 @@
                 </div>
             </div>
         </div>
-
-        <form action="/sendEmail" method="post">
-            <button type="submit">Send Email</button>
-        </form>
 
 
     </div> <!--container div-->

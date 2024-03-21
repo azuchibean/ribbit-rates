@@ -1,9 +1,8 @@
-
 body {
     margin: 0;
     padding: 0;
 
-   
+
     background: #232323;
     color: #cdcdcd;
     font-family: "Avenir Next", "Avenir", sans-serif;
@@ -12,7 +11,7 @@ body {
 #menuToggle {
     display: block;
     position: fixed;
-    top: 25px;
+    top: 35px;
     right: 75px;
 
     z-index: 1;
@@ -44,7 +43,7 @@ body {
     cursor: pointer;
 
     opacity: 0;
-  
+
     z-index: 2;
 
     -webkit-touch-callout: none;
@@ -103,8 +102,8 @@ body {
     width: 300px;
     margin: -50px 0 0 -200px;
     padding: 50px;
-    top:0px;
-    right:0px;
+    top: 0px;
+    right: 0px;
     padding-top: 125px;
 
     background: #ededed;
