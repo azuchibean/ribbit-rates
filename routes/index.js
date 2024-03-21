@@ -159,53 +159,6 @@ router.post('/confirm', (req, res) => {
 });
 
 
-/* get user preference setting page */
-router.get('/preferences', (req, res) => {
-  const currencies = [
-    { code: 'USD', name: 'United States Dollar' },
-    { code: 'EUR', name: 'Euro' },
-    { code: 'JPY', name: 'Japanese Yen' },
-    { code: 'GBP', name: 'British Pound' },
-    { code: 'CAD', name: 'Canadian Dollar' },
-    { code: 'CNY', name: 'Chinese Yuan' },
-    { code: 'INR', name: 'Indian Rupee' },
-    { code: 'MXN', name: 'Mexican Peso' }
-    // Add more currencies as needed
-  ];
-
-  res.render('preferences', { currencies: currencies });
-});
-
-
-
-router.post('/preferences', async (req, res) => {
-  const email = req.session.email; // Retrieve email from session
-
-  const { fromCurrency, toCurrency, threshold } = req.body;
-
-
-  const docClient = new AWS.DynamoDB.DocumentClient();
-
-  const params = {
-    TableName: 'UserCurrency',
-    Item: {
-      email: email, // Primary key
-      fromCurrency: fromCurrency,
-      toCurrency: toCurrency,
-      threshold: parseFloat(threshold)
-    }
-  };
-
-  try {
-    await docClient.put(params).promise();
-    console.log('Preferences saved:', params.Item);
-    res.redirect('/login'); // Redirect to the main page
-  } catch (err) {
-    console.error('Error saving preferences:', err);
-    res.status(500).render('preferences', { errorMessage: 'Error saving preferences. Please try again.' });
-  }
-});
-
 
 
 /*get profile page*/
