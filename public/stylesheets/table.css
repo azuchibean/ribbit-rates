@@ -1,0 +1,21 @@
+#dataTable {
+    border-collapse: collapse;
+    width: 25%;
+}
+
+/* Style for table header */
+#dataTable th {
+    border: 1px solid black;
+    padding: 8px;
+    width: 50%;
+}
+
+/* Style for table cells */
+#dataTable td {
+    border: 1px solid black;
+    padding: 8px;
+}
+
+select {
+    padding: 0.5%;
+}
