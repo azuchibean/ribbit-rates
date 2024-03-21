@@ -1,7 +1,9 @@
 body {
     margin: 0;
     padding: 0;
-
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
 
     background: #232323;
     color: #cdcdcd;
@@ -28,7 +30,7 @@ body {
 }
 
 #menuToggle a:hover {
-    color: tomato;
+    color: #4CAF50;
 }
 
 
@@ -124,4 +126,8 @@ body {
 
 #menuToggle input:checked~ul {
     transform: none;
+}
+
+.content {
+    flex: 1
 }

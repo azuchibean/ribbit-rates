@@ -1,11 +1,20 @@
 <%- include('header.ejs', { title: 'Profile' }) %>
 
+<style>
+    /* Green theme */
+    .btn-green {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+    }
+</style>
+
     <div class="container mt-5 pt-5">
         <div class="row justify-content-center">
             <div class="col-md-5">
 
                 <div class="form-container">
-                    <h3 class="text-center">Profile Settings</h3>
+                    <h3 class="text-center">Notification Settings</h3>
                     <br />
                     <div class="form-group">
                         <label for="email">Email address:</label>
@@ -18,9 +27,9 @@
 
                     <!--create alert-->
                     <div>
-                        <h3>Create Alerts</h3>
-                        <p>Create a new alert when a currency exchange pair hits a target exchange rate</p>
-                        <button id="createAlertButton" class="btn btn-primary" data-bs-toggle="modal"
+                        <h3>Create Rate Alerts</h3>
+                        <p>Create a new alert for a currency exchange pair when it hits a target exchange rate.</p>
+                        <button id="createAlertButton" class="btn btn-green" data-bs-toggle="modal"
                             data-bs-target="#createAlertModal">Create New Alert</button>
                     </div>
 
@@ -106,3 +115,5 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script src="../javascript/profile.js"></script>
+
+<%- include('footer.ejs') %> 
