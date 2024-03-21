@@ -41,6 +41,11 @@ router.get('/', async (req, res, next) => {
 
 /* get main page*/
 router.get('/main', function (req, res, next) {
+  // Check if user is authenticated
+  if (!req.session.user || !req.session.user.accessToken) {
+    console.log("please log in")
+    return res.redirect('/login'); // Redirect to login page if not authenticated
+  }
   const filePath = path.join(__dirname, '..', 'public', 'currencies.json');
   const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
   res.render('main', { currencies: data.currencies });
@@ -61,20 +66,20 @@ router.post('/signup', (req, res) => {
   ];
 
   userPool.signUp(email, password, attributeList, null, (err, result) => {
-      if (err) {
-          console.error('Signup error:', err);
-          let errorMessage = err.message;
+    if (err) {
+      console.error('Signup error:', err);
+      let errorMessage = err.message;
 
-            // Check if the error is because the user already exists
-            if (err.code === 'UsernameExistsException') {
-              errorMessage = 'User already exists. Please use a different email or login.';
-          }
-          res.status(400).render('signup', { errorMessage: err.message });
-          return;
+      // Check if the error is because the user already exists
+      if (err.code === 'UsernameExistsException') {
+        errorMessage = 'User already exists. Please use a different email or login.';
       }
-      console.log('Signup success:', result);
-      req.session.email = email; // Store email in session
-      res.redirect('/confirm'); // Redirect to the confirmation page
+      res.status(400).render('signup', { errorMessage: err.message });
+      return;
+    }
+    console.log('Signup success:', result);
+    req.session.email = email; // Store email in session
+    res.redirect('/confirm'); // Redirect to the confirmation page
   });
 });
 
@@ -103,6 +108,10 @@ router.post('/login', (req, res) => {
   cognitoUser.authenticateUser(authenticationDetails, {
     onSuccess: (result) => {
       console.log('Login successful');
+      req.session.user = {
+        accessToken: result.getAccessToken().getJwtToken(),
+        email: username
+      }
       res.redirect('/main'); // Redirect to home page
     },
     onFailure: (err) => {
@@ -145,7 +154,7 @@ router.post('/confirm', (req, res) => {
       return;
     }
     console.log('Account confirmed:', result);
-    res.redirect('/preferences'); // Redirect to preferences page after successful confirmation
+    res.redirect('/login'); // Redirect to preferences page after successful confirmation
   });
 });
 
@@ -153,15 +162,15 @@ router.post('/confirm', (req, res) => {
 /* get user preference setting page */
 router.get('/preferences', (req, res) => {
   const currencies = [
-      { code: 'USD', name: 'United States Dollar' },
-      { code: 'EUR', name: 'Euro' },
-      { code: 'JPY', name: 'Japanese Yen' },
-      { code: 'GBP', name: 'British Pound' },
-      { code: 'CAD', name: 'Canadian Dollar' },
-      { code: 'CNY', name: 'Chinese Yuan' },
-      { code: 'INR', name: 'Indian Rupee' },
-      { code: 'MXN', name: 'Mexican Peso' }
-      // Add more currencies as needed
+    { code: 'USD', name: 'United States Dollar' },
+    { code: 'EUR', name: 'Euro' },
+    { code: 'JPY', name: 'Japanese Yen' },
+    { code: 'GBP', name: 'British Pound' },
+    { code: 'CAD', name: 'Canadian Dollar' },
+    { code: 'CNY', name: 'Chinese Yuan' },
+    { code: 'INR', name: 'Indian Rupee' },
+    { code: 'MXN', name: 'Mexican Peso' }
+    // Add more currencies as needed
   ];
 
   res.render('preferences', { currencies: currencies });
@@ -201,6 +210,11 @@ router.post('/preferences', async (req, res) => {
 
 /*get profile page*/
 router.get('/profile', function (req, res, next) {
+  // Check if user is authenticated
+  if (!req.session.user || !req.session.user.accessToken) {
+    console.log("please log in")
+    return res.redirect('/login'); // Redirect to login page if not authenticated
+  }
   //retrieve currently logged in user's email
   const email = "angela@gmail.com"
 
@@ -261,20 +275,20 @@ router.delete('/profile/:alertId', async (req, res, next) => {
   const docClient = new AWS.DynamoDB.DocumentClient();
 
   const params = {
-      TableName: 'Users',
-      Key: {
-          user: email,
-          alertId: alertId
-      }
+    TableName: 'Users',
+    Key: {
+      user: email,
+      alertId: alertId
+    }
   };
 
   try {
-      await docClient.delete(params).promise();
-      console.log(`Alert with id ${alertId} deleted successfully`);
-      res.sendStatus(200); // Send a success response
+    await docClient.delete(params).promise();
+    console.log(`Alert with id ${alertId} deleted successfully`);
+    res.sendStatus(200); // Send a success response
   } catch (err) {
-      console.error('Error deleting alert:', err);
-      res.status(500).send('Error deleting alert');
+    console.error('Error deleting alert:', err);
+    res.status(500).send('Error deleting alert');
   }
 });
 
@@ -300,7 +314,7 @@ router.post('/sendEmail', async (req, res) => {
       },
       Subject: { Data: subject }
     },
-    Source: 'currencyapp265@gmail.com' //THIS IS OUR WEB APP'S EMAIL (ask angela for the password)
+    Source: 'ribbit.appnotifs@gmail.com' //THIS IS OUR WEB APP'S EMAIL (ask angela for the password)
   };
 
   try {
@@ -356,5 +370,21 @@ router.post('/sendNotif', async (req, res) => {
     res.status(500).send('Failed to send email');
   }
 });
+
+router.get('/session-data', (req, res) => {
+  console.log(req.session);
+  res.send('Session data logged in the console.');
+});
+
+router.get('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Error destroying session:', err);
+      return res.status(500).send('Internal Server Error');
+    }
+    res.redirect('/'); // Redirect to login page after logout
+  });
+});
+
 
 module.exports = router;
