@@ -6,7 +6,7 @@ const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 const AWS = require('aws-sdk');
 const fs = require('fs');
 const path = require('path');
-
+const jwt = require('jsonwebtoken');
 
 
 AWS.config.update({
@@ -25,11 +25,32 @@ const poolData = {
 
 const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
 
+//autheneticates user based on their accesstoken given on cognito login 
+function requireAuth(req, res, next) {
+  try {
+    const accessToken = req.session.user.accessToken;
+    //validate accessToken expiry
+    const decodedToken = jwt.decode(accessToken);
+    const currentTime = Math.floor(Date.now() / 1000);
+
+    if (!decodedToken || !decodedToken.exp || decodedToken.exp < currentTime) {
+      console.log("Access token is invalid or expired");
+      return res.redirect('/login');
+    }
+
+    // Token is valid, continue with your logic
+    next();
+  } catch (e) {
+    console.log("Access token is missing please login");
+    return res.redirect('/login');
+  }
+
+}
+
 
 /* GET home page. */
 router.get('/', async (req, res, next) => {
   try {
-
     // Render the index page with the retrieved data
     res.render('index');
   } catch (error) {
@@ -40,12 +61,7 @@ router.get('/', async (req, res, next) => {
 });
 
 /* get main page*/
-router.get('/main', function (req, res, next) {
-  // Check if user is authenticated
-  if (!req.session.user || !req.session.user.accessToken) {
-    console.log("please log in")
-    return res.redirect('/login'); // Redirect to login page if not authenticated
-  }
+router.get('/main', requireAuth, function (req, res, next) {
   const filePath = path.join(__dirname, '..', 'public', 'currencies.json');
   const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
   res.render('main', { currencies: data.currencies });
@@ -162,12 +178,7 @@ router.post('/confirm', (req, res) => {
 
 
 /*get profile page*/
-router.get('/profile', function (req, res, next) {
-  // Check if user is authenticated
-  if (!req.session.user || !req.session.user.accessToken) {
-    console.log("please log in")
-    return res.redirect('/login'); // Redirect to login page if not authenticated
-  }
+router.get('/profile', requireAuth, function (req, res, next) {
   //retrieve currently logged in user's email
   const email = req.session.user.email
 
@@ -175,10 +186,8 @@ router.get('/profile', function (req, res, next) {
   const filePath = path.join(__dirname, '..', 'public', 'currencies.json');
   const currencies = JSON.parse(fs.readFileSync(filePath, 'utf8')).currencies;
 
-
   //need to retrieve user's rate alerts from db
   const docClient = new AWS.DynamoDB.DocumentClient();
-
 
   const params = {
     TableName: "Users",
@@ -394,7 +403,7 @@ router.get('/logout', (req, res) => {
 
 
 /* get map  page */
-router.get('/map', (req, res) => {
+router.get('/map', requireAuth, (req, res) => {
 
   res.render('map', {
     mapboxAccessToken: process.env.MAPBOX_ACCESS_TOKEN
