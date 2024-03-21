@@ -71,7 +71,7 @@ app.post('/getChart', async (req, res) => {
         },],
       },
     })
-    .setWidth(400)
+    .setWidth(425)
     .setHeight(325)
     .setBackgroundColor('transparent');
 
