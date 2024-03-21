@@ -222,7 +222,7 @@ router.get('/profile', function (req, res, next) {
   const docClient = new AWS.DynamoDB.DocumentClient();
 
 
-  const params = { 
+  const params = {
     TableName: "Users",
     KeyConditionExpression: '#u = :u',
     ExpressionAttributeNames: {
@@ -252,7 +252,7 @@ router.post('/profile', async (req, res, next) => {
 
   const docClient = new AWS.DynamoDB.DocumentClient();
 
-  const params = {
+  const putParams = {
     TableName: 'Users',
     Item: {
       user: email,
@@ -264,12 +264,54 @@ router.post('/profile', async (req, res, next) => {
   };
 
   try {
-    await docClient.put(params).promise();
+    await docClient.put(putParams).promise();
     console.log('Rate alert saved successfully');
     res.redirect('/profile');
   } catch (err) {
     console.error('Error saving rate alert:', err);
     res.status(500).send('Error saving rate alert');
+  }
+});
+
+router.post('/check-duplicate', async (req, res) => {
+  const email = req.session.user.email;
+
+  const { fromCurrency, toCurrency, rateExchange } = req.body;
+
+  const docClient = new AWS.DynamoDB.DocumentClient();
+
+  const paramsQuery = {
+    TableName: 'Users',
+    KeyConditionExpression: '#u = :u',
+    ExpressionAttributeNames: {
+      '#u': 'user'
+    },
+    ExpressionAttributeValues: {
+      ':u': email
+    }
+  };
+
+  try {
+    const data = await docClient.query(paramsQuery).promise();
+    const existingEntries = data.Items;
+
+    // Check if the new entry already exists
+    const isDuplicate = existingEntries.some(entry =>
+      entry.from === fromCurrency &&
+      entry.to === toCurrency &&
+      entry.rate === parseFloat(rateExchange)
+    );
+
+    if (isDuplicate) {
+      console.log('Duplicate entry found');
+      res.status(400).send('Duplicate entry');
+      return;
+    }
+    // No duplicate found, send success response
+    res.sendStatus(200);
+  } catch (err) {
+    console.error('Error checking for duplicate entry:', err);
+    res.status(500).send('Error checking for duplicate entry');
   }
 });
 
