@@ -1,23 +1,36 @@
 <%- include('header.ejs', { title: 'Main' }) %>
 
-<div class="container mt-5">
-    <p>Current exchange rate from CAD to JPY as of</p>
-    <label for="exchange-from">Choose a currency: </label>
+  <!--Find better solution to this later-->
+  <br>
+  <br>
+  <br>
+  <div class="container mt-5">
+    <h2>Current Exchange Rate Calculator</h2>
+    <label for="exchange-from">Select currency to convert from: </label>
     <select name="exchange-from" id="exchange-from">
       <% currencies.forEach(function(currency) { %>
-        <option value="<%= currency.code %>"><%= currency.name %> (<%= currency.code %>)</option>
-      <% }); %>
+        <option value="<%= currency.code %>">
+          <%= currency.name %> (<%= currency.code %>)
+        </option>
+        <% }); %>
     </select>
     <br>
-    <label for="exchange-to">Choose a currency to convert to: </label>
+    <br>
+    <label for="exchange-to">Select currency to convert to: </label>
     <select name="exchange-from" id="exchange-to">
       <% currencies.forEach(function(currency) { %>
-        <option value="<%= currency.code %>"><%= currency.name %> (<%= currency.code %>)</option>
-      <% }); %>
+        <option value="<%= currency.code %>">
+          <%= currency.name %> (<%= currency.code %>)
+        </option>
+        <% }); %>
     </select>
     <br>
-    <button id="fetchButton">Find exchange rate</button>
+    <button type="button" class="btn btn-success" id="fetchButton">Find exchange rate</button>
     <div id="result"></div>
+
+    <br>
+    <h2>Historical Rates Tracker</h2>
+
     <table id="dataTable">
       <thead>
         <tr>
@@ -26,13 +39,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>
-
-          </td>
-        </tr>
       </tbody>
     </table>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script type="module" src="/javascript/forex.js"></script>
+
+<%- include('footer.ejs') %>
