@@ -393,4 +393,12 @@ router.get('/logout', (req, res) => {
 });
 
 
+/* get map  page */
+router.get('/map', (req, res) => {
+  res.render('map', {mapboxAccessToken: process.env.MAPBOX_ACCESS_TOKEN });
+});
+
+
+
+
 module.exports = router;
