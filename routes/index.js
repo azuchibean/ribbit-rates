@@ -395,7 +395,9 @@ router.get('/logout', (req, res) => {
 
 /* get map  page */
 router.get('/map', (req, res) => {
-  res.render('map', {mapboxAccessToken: process.env.MAPBOX_ACCESS_TOKEN });
+  
+  res.render('map', {title: 'Forex Locations - CurrencyEx',
+  mapboxAccessToken: process.env.MAPBOX_ACCESS_TOKEN });
 });
 
 
