@@ -11,6 +11,7 @@ document.getElementById("fetchButton").addEventListener("click", async () => {
     document.getElementById(
       "result"
     ).innerText = `Exchange rate from ${fromCurrency} to ${toCurrency}: ${exchangeRate}`;
+    document.getElementById("result").style.color = "black"
   } catch (error) {
     console.error("Error fetching exchange rate:", error);
     document.getElementById("result").innerText =
@@ -19,7 +20,7 @@ document.getElementById("fetchButton").addEventListener("click", async () => {
 });
 
 // Update table on selections
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   const fromCurrency = document.getElementById('exchange-from');
   const toCurrency = document.getElementById('exchange-to');
 
@@ -30,36 +31,78 @@ document.addEventListener('DOMContentLoaded', function() {
   fetchData()
 
   async function fetchData() {
-      const selectedOption1 = fromCurrency.value;
-      const selectedOption2 = toCurrency.value;
+    const selectedOption1 = fromCurrency.value;
+    const selectedOption2 = toCurrency.value;
 
-      try {
-        const response = await axios.post("/getTableData", {selectedOption1, selectedOption2})
-        updateTable(response.data.exchangeRates)
-        
-      } catch (error) {
-        console.log(error)
-      }
+    try {
+      const response = await axios.post("/getLastWeekData", { selectedOption1, selectedOption2 })
+      updateTable(response.data.exchangeRates)
+      getChart(response.data.exchangeRates)
+
+    } catch (error) {
+      console.log(error)
+    }
 
   }
 
   function updateTable(data) {
-      const tableBody = document.querySelector('#dataTable tbody');
-      tableBody.innerHTML = ''; // Clear existing table data
+    const tableBody = document.querySelector('#dataTable tbody');
+    tableBody.innerHTML = ''; // Clear existing table data
 
-      // Populate table with fetched data
-      data.forEach(function(row) {
-          const tr = document.createElement('tr');
-          const date = new Date(row.Date*1000)
+    // Populate table with fetched data
+    data.forEach(function (row) {
+      const tr = document.createElement('tr');
+      const date = new Date(row.Date * 1000)
 
-          const year = date.getFullYear();
-          const month = ('0' + (date.getMonth() + 1)).slice(-2);
-          const day = ('0' + date.getDate()).slice(-2);
+      const year = date.getFullYear();
+      const month = ('0' + (date.getMonth() + 1)).slice(-2);
+      const day = ('0' + date.getDate()).slice(-2);
 
-          const dateString = `${year}-${month}-${day}`;
+      const dateString = `${year}-${month}-${day}`;
 
-          tr.innerHTML = `<td>${dateString}</td><td>${row.ConversionRate}</td>`;
-          tableBody.appendChild(tr);
-      });
+      tr.innerHTML = `<td>${dateString}</td><td>${row.ConversionRate}</td>`;
+      tableBody.appendChild(tr);
+    });
   }
 });
+
+async function getChart(data) {
+  const dataArray = [];
+  const labelsArray = [];
+
+  for (const pair of data) {
+    const date = new Date(pair.Date * 1000);
+
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+
+    const dateString = `${year}-${month}-${day}`;
+
+    dataArray.push(pair.ConversionRate);
+    labelsArray.push(dateString);
+  }
+
+  dataArray.reverse();
+  labelsArray.reverse();
+  const currentCurrencyPair = data[0].CurrencyPair;
+
+  try {
+    const response = await axios.post('/getChart', {dataArray, labelsArray, currencyPair: currentCurrencyPair} );
+    const chartUrl = response.data;
+
+    // Create an image element and set its source to the chart URL
+    const imgElement = document.createElement('img');
+    imgElement.src = chartUrl;
+
+    // Append the image element to the div with id "graph"
+    const graphDiv = document.getElementById('historicalGraph');
+    graphDiv.innerHTML = ''; // Clear previous content
+    graphDiv.appendChild(imgElement);
+
+  } catch (error) {
+    console.error('Error fetching chart:', error);
+  }
+
+  
+}

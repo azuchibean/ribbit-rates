@@ -4,44 +4,51 @@
   <br>
   <br>
   <br>
-  <div class="container mt-5">
-    <h2>Current Exchange Rate Calculator</h2>
-    <label for="exchange-from">Select currency to convert from: </label>
-    <select name="exchange-from" id="exchange-from">
-      <% currencies.forEach(function(currency) { %>
-        <option value="<%= currency.code %>">
-          <%= currency.name %> (<%= currency.code %>)
-        </option>
-        <% }); %>
-    </select>
-    <br>
-    <br>
-    <label for="exchange-to">Select currency to convert to: </label>
-    <select name="exchange-from" id="exchange-to">
-      <% currencies.forEach(function(currency) { %>
-        <option value="<%= currency.code %>">
-          <%= currency.name %> (<%= currency.code %>)
-        </option>
-        <% }); %>
-    </select>
-    <br>
-    <button type="button" class="btn btn-success" id="fetchButton">Find exchange rate</button>
-    <div id="result"></div>
-
-    <br>
-    <h2>Historical Rates Tracker</h2>
-
-    <table id="dataTable">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Exchange Rate</th>
-        </tr>
-      </thead>
-      <tbody>
-      </tbody>
-    </table>
+  <div class="container mt-6">
+    <div class="row">
+      <div class="col-auto">
+        <h2>Current Exchange Rate</h2>
+        <label for="exchange-from">Select currency to convert from: </label>
+        <select class="form-control" name="exchange-from" id="exchange-from">
+          <% currencies.forEach(function(currency) { %>
+            <option value="<%= currency.code %>">
+              <%= currency.name %> (<%= currency.code %>)
+            </option>
+            <% }); %>
+        </select>
+        <br>
+        <label for="exchange-to">Select currency to convert to: </label>
+        <select class="form-control" name="exchange-from" id="exchange-to">
+          <% currencies.forEach(function(currency) { %>
+            <option value="<%= currency.code %>">
+              <%= currency.name %> (<%= currency.code %>)
+            </option>
+            <% }); %>
+        </select>
+        <br>
+        <button type="button" class="btn btn-success" id="fetchButton">Find exchange rate</button>
+        <div id="result">spook</div>
+        <div class="col">
+          <h2>Historical Rates</h2>
+          <table id="dataTable">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Exchange Rate</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col-auto">
+        <div id="historicalGraph"></div>
+      </div>
+    </div>
   </div>
+
+
 
 
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

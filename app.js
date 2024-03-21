@@ -5,6 +5,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var { fetchExchangeRate, fetchLastSevenDays } = require('./db');
+const QuickChart = require('quickchart-js');
 
 require('dotenv').config();
 
@@ -46,7 +47,7 @@ app.post('/query', async (req, res) => {
 });
 
 // POST for table
-app.post('/getTableData', async (req, res) => {
+app.post('/getLastWeekData', async (req, res) => {
   const fromCurrency = req.body.selectedOption1;
   const toCurrency = req.body.selectedOption2;
 
@@ -54,6 +55,31 @@ app.post('/getTableData', async (req, res) => {
 
   res.json({ exchangeRates });
 });
+
+app.post('/getChart', async (req, res) => {
+  const dataArray = req.body.dataArray;
+  const labelsArray = req.body.labelsArray;
+  const currencyPair = req.body.currencyPair;
+
+  const myChart = new QuickChart();
+  myChart
+  .setConfig({
+    type: 'line',
+    data: {
+      labels: labelsArray,
+      datasets: [{ label: currencyPair, data: dataArray }],
+    },
+  })
+  .setWidth(300)
+  .setHeight(200)
+  .setBackgroundColor('transparent');
+
+  const chartUrl = myChart.getUrl();
+  // console.log(chartUrl);
+
+  res.send(chartUrl)
+
+})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -1,6 +1,6 @@
 #dataTable {
     border-collapse: collapse;
-    width: 25%;
+    width: 75%;
 }
 
 /* Style for table header */
@@ -18,4 +18,14 @@
 
 select {
     padding: 0.5%;
+}
+
+#result {
+    margin-top: 2.5%;
+    margin-bottom: 2.5%;
+    color: #FFFFFF;
+}
+
+#fetchButton {
+    margin-top: 2.5%;
 }
