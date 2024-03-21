@@ -38,6 +38,10 @@ function requireAuth(req, res, next) {
       return res.redirect('/login');
     }
 
+    // Calculate remaining time until token expiration
+    const remainingTime = decodedToken.exp - currentTime;
+    console.log("Access token expires in:", remainingTime, "seconds");
+
     // Token is valid, continue with your logic
     next();
   } catch (e) {
@@ -103,7 +107,8 @@ router.post('/signup', (req, res) => {
 
 /* get login page */
 router.get('/login', (req, res) => {
-  res.render('login');
+  const message = req.query.message;
+  res.render('login', {message: message});
 });
 
 router.post('/login', (req, res) => {
@@ -170,7 +175,7 @@ router.post('/confirm', (req, res) => {
       return;
     }
     console.log('Account confirmed:', result);
-    res.redirect('/login'); // Redirect to preferences page after successful confirmation
+    res.redirect('/login?message=Account successfully created. Please log in.'); // Redirect to login page after successful confirmation
   });
 });
 

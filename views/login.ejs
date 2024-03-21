@@ -21,6 +21,11 @@
 
     <div class="container">
         <h2 class="mb-4">Login</h2>
+        <% if (message) { %>
+            <div class="alert alert-success" role="alert">
+              <%= message %>
+            </div>
+        <% } %>
         <form action="/login" method="post">
             <div class="mb-3">
                 <label for="username" class="form-label">Email:</label>
