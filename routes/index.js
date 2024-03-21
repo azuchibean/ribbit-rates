@@ -198,7 +198,7 @@ router.get('/profile', function (req, res, next) {
     } else {
       const rateAlerts = data.Items || [];
       console.log(data.Items)
-      res.render('profile', { email: email, rateAlerts: rateAlerts, currencies:currencies});
+      res.render('profile', { email: email, rateAlerts: rateAlerts, currencies: currencies });
     }
   })
 })
@@ -395,9 +395,10 @@ router.get('/logout', (req, res) => {
 
 /* get map  page */
 router.get('/map', (req, res) => {
-  
-  res.render('map', {title: 'Forex Locations - CurrencyEx',
-  mapboxAccessToken: process.env.MAPBOX_ACCESS_TOKEN });
+
+  res.render('map', {
+    mapboxAccessToken: process.env.MAPBOX_ACCESS_TOKEN
+  });
 });
 
 
