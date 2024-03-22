@@ -2,6 +2,7 @@ const { db, Table } = require("./db.config.js");
 
 // Gets latest exchange rate from DynamoDB
 const fetchExchangeRate = async (fromCurrency, toCurrency) => {
+
   const params = {
     TableName: Table,
     KeyConditionExpression: "CurrencyPair = :currencyPair",

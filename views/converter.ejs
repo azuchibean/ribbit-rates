@@ -15,20 +15,20 @@
                 </select>
                 <br>
 
-                <div>
-                    <input type="text" class="form-control">
+                <div class="align-items-center">
+                    <input type="text" class="form-control" id="oldValue" value="0">
                 </div>
             </div>
 
 
             <div class="col-sm">
-                <div id="result"></div>
+                <div id="result" class="justify-content-center"></div>
                 <img src="/images/greenarrow.png" class="img-fluid" alt="green arrow">
             </div>
 
             <div class="col-md">
                 <label for="exchange-from">Select currency to convert from: </label>
-                <select class="form-control" name="exchange-from" id="exchange-from">
+                <select class="form-control" name="exchange-from" id="exchange-to">
                     <option value=""></option>
                     <% currencies.forEach(function(currency) { %>
                         <option value="<%= currency.code %>">
@@ -39,7 +39,7 @@
                 <br>
 
                 <div>
-                    <input type="text" class="form-control">
+                    <input type="text" class="form-control" id="newValue" value="0">
                 </div>
             </div>
         </div>

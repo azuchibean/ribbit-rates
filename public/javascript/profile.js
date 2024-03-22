@@ -1,7 +1,7 @@
 //function to add more alerts from filling out the modal 
 document.addEventListener('DOMContentLoaded', function () {
     const alertList = document.getElementById('alertList');
-    const createAlertButton = document.querySelector('#createAlertModal button.btn-primary');
+    const createAlertButton = document.querySelector('#createAlertModal button.btn-green');
 
     createAlertButton.addEventListener('click', async function () {
         const fromCurrency = document.getElementById('fromCurrency').value;

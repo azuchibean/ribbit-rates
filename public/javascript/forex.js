@@ -33,8 +33,6 @@ document.addEventListener('DOMContentLoaded', function () {
   fromCurrency.addEventListener('change', fetchData);
   toCurrency.addEventListener('change', fetchData);
 
-  fetchData()
-
   async function fetchData() {
     const selectedOption1 = fromCurrency.value;
     const selectedOption2 = toCurrency.value;
