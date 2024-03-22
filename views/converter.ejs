@@ -1,4 +1,51 @@
 <%- include('header.ejs', { title: 'ribbit rates' }) %>
 
+    <br><br><br>
+    <div class="container mt-6">
+        <div class="row align-items-center">
+            <div class="col-md">
+                <label for="exchange-from">Select currency to convert from: </label>
+                <select class="form-control" name="exchange-from" id="exchange-from">
+                    <option value=""></option>
+                    <% currencies.forEach(function(currency) { %>
+                        <option value="<%= currency.code %>">
+                            <%= currency.name %> (<%= currency.code %>)
+                        </option>
+                        <% }); %>
+                </select>
+                <br>
 
-<%- include('footer.ejs') %>
+                <div>
+                    <input type="text" class="form-control">
+                </div>
+            </div>
+
+
+            <div class="col-sm">
+                <div id="result"></div>
+                <img src="/images/greenarrow.png" class="img-fluid" alt="green arrow">
+            </div>
+
+            <div class="col-md">
+                <label for="exchange-from">Select currency to convert from: </label>
+                <select class="form-control" name="exchange-from" id="exchange-from">
+                    <option value=""></option>
+                    <% currencies.forEach(function(currency) { %>
+                        <option value="<%= currency.code %>">
+                            <%= currency.name %> (<%= currency.code %>)
+                        </option>
+                        <% }); %>
+                </select>
+                <br>
+
+                <div>
+                    <input type="text" class="form-control">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script type="module" src="/javascript/converter.js"></script>
+
+    <%- include('footer.ejs') %>
