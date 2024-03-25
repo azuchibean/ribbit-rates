@@ -7,6 +7,8 @@ const AWS = require('aws-sdk');
 const fs = require('fs');
 const path = require('path');
 const jwt = require('jsonwebtoken');
+var { fetchExchangeRate, fetchLastSevenDays } = require('../db');
+const QuickChart = require('quickchart-js');
 
 
 AWS.config.update({
@@ -16,7 +18,6 @@ AWS.config.update({
 });
 
 const ses = new AWS.SES({ apiVersion: '2010-12-01' });
-const sns = new AWS.SNS();
 
 const poolData = {
   UserPoolId: process.env.COGNITO_USER_POOL_ID,
@@ -184,7 +185,52 @@ router.post('/confirm', (req, res) => {
   });
 });
 
+// POST for button
+router.post('/query', async (req, res) => {
+  const fromCurrency = req.body.fromCurrency;
+  const toCurrency = req.body.toCurrency;
 
+  const exchangeRate = await fetchExchangeRate(fromCurrency, toCurrency);
+
+  res.json({ exchangeRate });
+});
+
+// POST for table
+router.post('/getLastWeekData', async (req, res) => {
+  const fromCurrency = req.body.selectedOption1;
+  const toCurrency = req.body.selectedOption2;
+
+  const exchangeRates = await fetchLastSevenDays(fromCurrency, toCurrency);
+
+  res.json({ exchangeRates });
+});
+
+router.post('/getChart', async (req, res) => {
+  const dataArray = req.body.dataArray;
+  const labelsArray = req.body.labelsArray;
+  const currencyPair = req.body.currencyPair;
+
+  const myChart = new QuickChart();
+  myChart
+    .setConfig({
+      type: 'line',
+      data: {
+        labels: labelsArray,
+        datasets: [{ label: currencyPair, data: dataArray, borderColor: 'rgb(144, 238, 144)', backgroundColor: 'rgba(144, 238, 144, 0.5)'
+        },],
+      },
+    })
+    .setWidth(425)
+    .setHeight(325)
+    .setBackgroundColor('transparent');
+
+  const chartUrl = myChart.getUrl();
+  // console.log(chartUrl);
+
+  res.send(chartUrl)
+
+
+})
 
 
 /*get profile page*/
@@ -292,7 +338,6 @@ router.post('/check-duplicate', async (req, res) => {
   }
 });
 
-
 router.delete('/profile/:alertId', async (req, res, next) => {
   const { alertId } = req.params;
   const email = req.session.user.email;
@@ -316,10 +361,6 @@ router.delete('/profile/:alertId', async (req, res, next) => {
     res.status(500).send('Error deleting alert');
   }
 });
-
-
-
-
 
 //via SES 
 router.post('/sendEmail', async (req, res) => {
@@ -367,32 +408,6 @@ router.post('/verify-email', async (req, res) => {
   } catch (error) {
     console.error(`Failed to send verification email to ${email}:`, error);
     res.status(500).send('Failed to send verification email');
-  }
-});
-
-//will send email notification via SNS to ALL members (NOT THE SERVICE I WANT TO USE TBH BUT IT WORKS)
-router.post('/sendNotif', async (req, res) => {
-  const subject = "rate hit";
-  const body = "CASDKJASKDJ";
-
-  const params = {
-    TopicArn: 'arn:aws:sns:us-west-2:533267160590:currency', // Replace with your SNS topic ARN
-    Message: JSON.stringify({
-      default: 'Custom email notification',
-      email: JSON.stringify({
-        subject: subject,
-        body: body
-      })
-    }),
-    MessageStructure: 'json'
-  };
-
-  try {
-    await sns.publish(params).promise();
-    res.status(200).send('Email sent successfully');
-  } catch (error) {
-    console.error('Email sending failed:', error);
-    res.status(500).send('Failed to send email');
   }
 });
 
