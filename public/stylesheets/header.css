@@ -4,7 +4,7 @@ body {
     height: 100vh;
     display: flex;
     flex-direction: column;
-
+    
     background: #232323;
     color: #cdcdcd;
     font-family: "Avenir Next", "Avenir", sans-serif;
@@ -14,10 +14,8 @@ body {
     display: block;
     position: fixed;
     top: 35px;
-    right: 75px;
-
+    right: 50px;
     z-index: 1;
-
     -webkit-user-select: none;
     user-select: none;
 }
@@ -25,14 +23,12 @@ body {
 #menuToggle a {
     text-decoration: none;
     color: #232323;
-
     transition: color 0.3s ease;
 }
 
 #menuToggle a:hover {
-    color: #4CAF50;
+    color: #a5a5a5;
 }
-
 
 #menuToggle input {
     display: block;
@@ -41,13 +37,9 @@ body {
     position: absolute;
     top: -5px;
     left: -5px;
-
     cursor: pointer;
-
     opacity: 0;
-
     z-index: 2;
-
     -webkit-touch-callout: none;
 }
 
@@ -60,7 +52,7 @@ body {
     top: 0px;
     position: relative;
 
-    background: #cdcdcd;
+    background: #181e0f;
     border-radius: 3px;
 
     z-index: 1;
@@ -101,14 +93,14 @@ body {
 
 #menu {
     position: fixed;
-    width: 300px;
+    width: 400px;
     margin: -50px 0 0 -200px;
     padding: 50px;
     top: 0px;
     right: 0px;
     padding-top: 125px;
-
-    background: #ededed;
+    height: 150vh;
+    background: #f0fbf0;
     list-style-type: none;
     -webkit-font-smoothing: antialiased;
 
@@ -130,4 +122,91 @@ body {
 
 .content {
     flex: 1
+}
+
+.separator{
+    margin-right: 20px;
+}
+
+.menu-profile::before {
+    content: "";
+    display: inline-block;
+    width: 40px; 
+    height: 40px; 
+    background-image: url('/images/bell.png'); 
+    background-repeat: no-repeat;
+    background-size: contain;  
+    vertical-align: middle;
+    margin-right: 25px;
+    margin-bottom: 3px;
+}
+
+/* .menu-email{
+    margin-left: 65px; 
+    margin-top: -20px;
+    color: grey;
+} */
+
+
+.menu-home::before {
+    content: "";
+    display: inline-block;
+    width: 40px; 
+    height: 40px; 
+    background-image: url('/images/home.png'); 
+    background-repeat: no-repeat;
+    background-size: contain;  
+    vertical-align: middle;
+    margin-right: 25px;
+    margin-bottom: 3px;
+}
+
+
+.menu-locations::before {
+    content: "";
+    display: inline-block;
+    width: 40px; 
+    height: 40px; 
+    background-image: url('/images/building.png'); 
+    background-repeat: no-repeat;
+    background-size: contain;  
+    vertical-align: middle;
+    margin-right: 25px;
+    margin-bottom: 3px;
+}
+
+.menu-convert::before {
+    content: "";
+    display: inline-block;
+    width: 40px; 
+    height: 40px; 
+    background-image: url('/images/convert.png'); 
+    background-repeat: no-repeat;
+    background-size: contain;  
+    vertical-align: middle;
+    margin-right: 25px;
+    margin-bottom: 3px;
+}
+
+
+/**button**/
+.menu-logout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #FFC107;
+    padding: 5px 10px; 
+    text-decoration: none; 
+    border-radius: 5px 5px 5px 5px;
+    width: 20vw; 
+    height: 4vw;
+    margin-top: 50px;
+}
+
+.menu-logout:hover {
+    background-color:  #6c6349; 
+}
+.menu-logout:hover,
+.menu-logout:hover > * {
+    color: white; 
 }

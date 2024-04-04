@@ -435,7 +435,9 @@ router.get('/map', requireAuth, (req, res) => {
   });
 });
 
-
+router.get('/testing', (req, res) => {
+  res.render('testing')
+})
 
 
 module.exports = router;
