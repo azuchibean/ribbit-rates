@@ -427,12 +427,36 @@ router.get('/logout', (req, res) => {
 });
 
 
-/* get map  page */
-router.get('/map', requireAuth, (req, res) => {
+router.get('/map', requireAuth, async(req, res) => {
 
+  const docClient = new AWS.DynamoDB.DocumentClient();
+  
+  const params = {
+    TableName: 'location'
+};
+
+try {
+    const data = await docClient.scan(params).promise();
+    const locations = data.Items.map(item => ({
+        name: item.name,
+        latitude: item.latitude,
+        longitude: item.longitude,
+        address: item.address
+    }));
+
+    const locationsJson = JSON.stringify(locations);
+   
+    
   res.render('map', {
-    mapboxAccessToken: process.env.MAPBOX_ACCESS_TOKEN
-  });
+      mapboxAccessToken: process.env.MAPBOX_ACCESS_TOKEN,
+      locations: locationsJson
+});
+
+  
+} catch (err) {
+    console.error('Error fetching data from DynamoDB:', err);
+    res.status(500).send('Error fetching location data');
+}
 });
 
 
