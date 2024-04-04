@@ -459,7 +459,9 @@ try {
 }
 });
 
-
+router.get('/testing', (req, res) => {
+  res.render('testing')
+})
 
 
 module.exports = router;
