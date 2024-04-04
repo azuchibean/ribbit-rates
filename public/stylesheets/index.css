@@ -1,0 +1,15 @@
+.title-container {
+    background-color: #fff6eb;
+    border-radius: 8px;
+    padding: 15px 15px 10px 15px;
+    text-align: center;
+    width: 60vw;
+    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);
+    margin: 0 auto;
+}
+
+
+.title-container p {
+    font-size: 1.2rem;
+    color: #333;
+}

@@ -1,57 +1,68 @@
 <%- include('header_not_loggedin.ejs', { title: 'Welcome' }) %>
-    <style>
-        /* Green theme */
-        .btn-green {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-        }
-    </style>
+  <style>
+    /* Green theme */
+    .btn-green {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+    }
 
-    <div class="container text-center mt-5 pt-5">
-        <h1>Welcome to <b>ribbit rates</b></h1>
-        <p>Your go-to currency exchange platform</p>
+    .btn-green:hover{
+      border: solid #4CAF50;
+    }
+  </style>
 
-        <!--featurettes--> 
-        <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
-            <div class="feature col">
-              <div class="feature-icon d-inline-flex align-items-center justify-content-center text-bg-primary bg-gradient fs-2 mb-3">
-                <svg class="bi" width="1em" height="1em"><use xlink:href="#collection"></use></svg>
-              </div>
-              <h3 class="fs-2 text-body-emphasis">View Current Exchange Rates</h3>
-              <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
-              <!-- <a href="#" class="icon-link">
+  <div class="container text-center mt-5 pt-5">
+    <div class="title-container">
+      <h1>Welcome to <b style="color:#4CAF50">ribbit rates</b></h1>
+      <p>Your go-to currency exchange platform</p>
+    </div>
+
+    <!--featurettes-->
+    <div class="row g-4 row-cols-1 pt-3 row-cols-lg-3">
+      <div class="feature col">
+        <div class="feature-icon d-inline-flex align-items-center justify-content-center bg-gradient fs-2 mb-2">
+          <img src="/images/1.png" style="height: 30%; width: 60%;">
+        </div>
+        <h3 class="fs-2 text-body-emphasis">View Current Exchange Rates</h3>
+        <p>Explore live currency exchange rates with our app.
+          Choose your currencies and view current rates on a graph.
+          Convert currencies easily, simplifying international transactions and travel planning.
+        </p>
+        <!-- <a href="#" class="icon-link">
                 Call to action
                 <svg class="bi"><use xlink:href="#chevron-right"></use></svg>
               </a> -->
-            </div>
-            <div class="feature col">
-              <div class="feature-icon d-inline-flex align-items-center justify-content-center text-bg-primary bg-gradient fs-2 mb-3">
-                <svg class="bi" width="1em" height="1em"><use xlink:href="#people-circle"></use></svg>
-              </div>
-              <h3 class="fs-2 text-body-emphasis">Get Notified</h3>
-              <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
-              <!-- <a href="#" class="icon-link">
+      </div>
+      <div class="feature col">
+        <div class="feature-icon d-inline-flex align-items-center justify-content-center bg-gradient fs-2 mb-2">
+          <img src="/images/2.png" style="height: 30%; width: 60%;">
+        </div>
+        <h3 class="fs-2 text-body-emphasis">Set Rate Alerts and Get Notified</h3>
+        <p>Set multiple currency exchange rate alerts and receive instant notifications when your desired rates met.
+          Stay informed and make timely decisions with our efficient rate alert feature.</p>
+        <!-- <a href="#" class="icon-link">
                 Call to action
                 <svg class="bi"><use xlink:href="#chevron-right"></use></svg>
               </a>    -->
-            </div>
-            <div class="feature col">
-              <div class="feature-icon d-inline-flex align-items-center justify-content-center text-bg-primary bg-gradient fs-2 mb-3">
-                <svg class="bi" width="1em" height="1em"><use xlink:href="#toggles2"></use></svg>
-              </div>
-              <h3 class="fs-2 text-body-emphasis">Locate Nearby Currency Exchange Offices </h3>
-              <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
-              <!-- <a href="#" class="icon-link">
+      </div>
+      <div class="feature col">
+        <div class="feature-icon d-inline-flex align-items-center justify-content-center bg-gradient fs-2 mb-2">
+          <img src="/images/3.png" style="height: 30%; width: 60%;">
+        </div>
+        <h3 class="fs-2 text-body-emphasis">Locate Nearby Currency Exchange Offices </h3>
+        <p>Easily locate nearby currency exchange offices on a map with our app.
+          Find the nearest options for exchanging currency, ensuring convenience and efficiency wherever you are.</p>
+        <!-- <a href="#" class="icon-link">
                 Call to action
                 <svg class="bi"><use xlink:href="#chevron-right"></use></svg>
               </a> -->
-            </div>
-          </div>
-        <div class="mt-4">
-            <a href="/login" class="btn btn-green me-2">Login</a>
-            <a href="/signup" class="btn btn-green">Sign Up</a>
-        </div>
+      </div>
     </div>
+    <div class="mt-4">
+      <a href="/login" class="btn btn-green me-2">Login</a>
+      <a href="/signup" class="btn btn-green">Sign Up</a>
+    </div>
+  </div>
 
-<%- include('footer_not_loggedin.ejs') %>
+  <%- include('footer_not_loggedin.ejs') %>
