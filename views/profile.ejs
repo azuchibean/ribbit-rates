@@ -7,6 +7,10 @@
             color: white;
             border: none;
         }
+
+        .btn-green:hover {
+            border: solid #4CAF50;
+        }
     </style>
 
     <div class="container mt-5 pt-5">
@@ -14,7 +18,7 @@
             <div class="col-md-5">
 
                 <div class="form-container">
-                    <h3 class="text-center">Alert Settings</h3>
+                    <h2 class="text-center">Alert Settings</h2>
                     <br />
                     <div class="form-group">
                         <label for="email">Email address:</label>
@@ -26,24 +30,25 @@
                     <hr class="my-4">
 
                     <!--create alert-->
-                    <div>
-                        <h3>Create Rate Alerts</h3>
-                        <p>Create a new alert for a currency exchange pair when it hits a target exchange rate.</p>
+                    <div class="text-center">
                         <button id="createAlertButton" class="btn btn-green" data-bs-toggle="modal"
-                            data-bs-target="#createAlertModal">Create New Alert</button>
+                            data-bs-target="#createAlertModal">Create New Rate Alert</button>
+                        <p>Create a new alert for a currency exchange pair when it hits a target exchange rate.
+                            Alerts will be sent to the email listed above.
+                        </p>
+
                     </div>
 
                     <br />
                     <!-- List of alerts -->
                     <div id="alertList">
-                        <h3> Your Rate Alerts</h3>
+                        <h3 class="text-center"> Your Rate Alerts</h3>
                         <% rateAlerts.forEach(alert=> { %>
-                            <div class="rounded border p-3 mb-3 alert-item" data-alert-id="<%= alert.alertId %>">
-                                1 <%= alert.from %> = <%= alert.rate %>
-                                        <%= alert.to %> <button class="delete-alert"
-                                                style="border: none; background: none; cursor: pointer;">
-                                                <img src="../images/trashcan.png" alt="trashcan" class="icon">
-                                            </button>
+                            <div id="alert-item" class="rounded border p-3 mt-3 mb-3 alert-item" data-alert-id="<%= alert.alertId %>">
+                                <img src="../images/email.png" id="profile-alarm" alt="alarm">
+                                1 <%= alert.from %> = <%= alert.rate %> <%= alert.to %> 
+                                <button class="delete-alert" id="deleteAlert"><img src="../images/trashcan.png" alt="trashcan" class="icon">
+                                </button>
                             </div>
                             <% }); %>
                     </div>

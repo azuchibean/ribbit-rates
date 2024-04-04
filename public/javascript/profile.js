@@ -52,16 +52,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Create a new rate alert box
         const alertBox = document.createElement('div');
-        alertBox.classList.add('rounded', 'border', 'p-3', 'mb-3', 'alert-item');
+        alertBox.classList.add('rounded', 'border', 'p-3','mb-3', 'alert-item');
         alertBox.dataset.alertId = alertId;
         alertBox.innerHTML = `
-            <div>1 ${fromCurrency} = ${targetRate} ${toCurrency}  <button class="delete-alert" style="border: none; background: none; cursor: pointer;">
-            <img src="../images/trashcan.png" alt="trashcan" class="icon">
-        </button>
+            <div>1 ${fromCurrency} = ${targetRate} ${toCurrency} </div>
         `;
 
         // Append the new rate alert box to the alertList
         alertList.appendChild(alertBox);
+
+        setTimeout(() => {
+            location.reload();
+        }, 10);
 
         // Hide the modal
         $('#createAlertModal').modal('hide');

@@ -1,9 +1,13 @@
+#email{
+    color:rgb(94, 94, 94);
+}
+
 .form-container {
     max-width: 500px;
     padding: 20px;
     border-radius: 10px;
     background-color: #fff;
-    box-shadow: 0 4px 6px rgba(36, 32, 32, 0.1);
+    box-shadow: 0 3px 6px rgba(36, 32, 32, 0.5);
 }
 
 .form-group {
@@ -38,4 +42,39 @@
 .icon {
     width: 24px;
     height: 24px;
+}
+
+#createAlertButton{
+    height: 7vh;
+    width: 20vw;
+    margin-bottom:10px;
+    font-size: 15pt;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#alert-item{
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+
+}
+
+#deleteAlert{
+    display:inline;
+    background: none; 
+    cursor: pointer;
+    border: 0.5pt solid grey;
+    border-radius: 5px;
+    margin-left:70px;
+}
+
+#deleteAlert:hover {
+    background-color: rgb(220, 219, 219);
+    
+}
+
+#profile-alarm{
+    width: 2.5vw;
+    margin-left: 5px;
+    margin-right: 20px;
 }
