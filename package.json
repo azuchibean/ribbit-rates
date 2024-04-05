@@ -18,6 +18,7 @@
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^9.0.2",
     "morgan": "~1.9.1",
+    "nodemon": "^3.1.0",
     "quickchart-js": "^3.1.3"
   }
 }

@@ -428,13 +428,12 @@ router.get('/logout', (req, res) => {
 
 
 router.get('/map', requireAuth, async(req, res) => {
-
+  
   const docClient = new AWS.DynamoDB.DocumentClient();
   
-  const params = {
+   const params = {
     TableName: 'location'
 };
-
 try {
     const data = await docClient.scan(params).promise();
     const locations = data.Items.map(item => ({
@@ -445,20 +444,17 @@ try {
     }));
 
     const locationsJson = JSON.stringify(locations);
-   
-    
+ 
   res.render('map', {
       mapboxAccessToken: process.env.MAPBOX_ACCESS_TOKEN,
       locations: locationsJson
 });
-
   
 } catch (err) {
     console.error('Error fetching data from DynamoDB:', err);
     res.status(500).send('Error fetching location data');
 }
 });
-
 router.get('/testing', (req, res) => {
   res.render('testing')
 })
