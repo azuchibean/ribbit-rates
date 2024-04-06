@@ -17,30 +17,41 @@
             color: red;
             font-weight: bold;
         }
+
+        /* Green theme */
+        .btn-green {
+            background-color: #4CAF50;
+            color: white;
+            border: solid transparent;
+        }
+
+        .btn-green:hover {
+            border: solid #4CAF50;
+        }
     </style>
 
     <div class="container">
         <h2 class="mb-4">Login</h2>
         <% if (message) { %>
             <div class="alert alert-success" role="alert">
-              <%= message %>
+                <%= message %>
             </div>
-        <% } %>
-        <form action="/login" method="post">
-            <div class="mb-3">
-                <label for="username" class="form-label">Email:</label>
-                <input type="text" class="form-control" id="username" name="username" required>
-            </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Password:</label>
-                <input type="password" class="form-control" id="password" name="password" required>
-            </div>
-            <button type="submit" class="btn btn-success">Login</button>
-            <% if (typeof errorMessage !=='undefined' && errorMessage) { %>
-                <div class="error-message">* <%= errorMessage %>
-                </div>
-                <% } %>
-        </form>
+            <% } %>
+                <form action="/login" method="post">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Email:</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password:</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-green">Login</button>
+                    <% if (typeof errorMessage !=='undefined' && errorMessage) { %>
+                        <div class="error-message">* <%= errorMessage %>
+                        </div>
+                        <% } %>
+                </form>
     </div>
 
-<%- include('footer_not_loggedin.ejs') %>
+    <%- include('footer_not_loggedin.ejs') %>
