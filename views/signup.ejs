@@ -16,10 +16,15 @@
 
     <div class="container">
         <h2 class="mb-4">Signup</h2>
+        <% if (message) { %>
+            <div class="alert alert-success" role="alert">
+              <%= message %>
+            </div>
+          <% } %>
         <form action="/signup" method="post">
             <div class="mb-3">
                 <label for="email" class="form-label">Email:</label>
-                <input type="email" class="form-control" id="email" name="email" required>
+                <input type="email" disabled class="form-control" id="email" name="email" value="<%= email %>" readonly>
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Password:</label>
@@ -27,7 +32,7 @@
             </div>
 
 
-            <button type="submit" class="btn btn-success">Sign Up</button>
+            <button type="submit" class="btn btn-success">Create Account</button>
 
             <% if (typeof errorMessage !=='undefined' && errorMessage) { %>
                 <div class="error-message" style="color: red;">* <%= errorMessage %>

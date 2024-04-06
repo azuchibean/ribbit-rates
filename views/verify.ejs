@@ -1,0 +1,51 @@
+<%- include('header_not_loggedin.ejs', { title: 'Verify' }) %>
+
+    <style>
+        .container {
+            max-width: 400px;
+            margin-top: 100px;
+        }
+
+        .form-label {
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            margin-bottom: 1rem;
+        }
+
+        .btn-green {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+        }
+        .btn-green:hover {
+            border:#4CAF50
+        }
+
+        .error-message {
+            color: red;
+        }
+    </style>
+    </head>
+
+    <body>
+
+        <div class="container">
+            <h2 class="mb-4">Signup</h2>
+            <form action="/verify-email" method="post">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Enter your email address:</label>
+                    <input type="text" class="form-control" name="email" required>
+                </div>
+                <button type="submit" class="btn btn-green">Confirm</button>
+            </form>
+            <% if (typeof errorMessage !=='undefined' ) { %>
+                <p class="error-message">
+                    <%= errorMessage %>
+                </p>
+                <% } %>
+        </div>
+    </body>
+
+    </html>

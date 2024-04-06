@@ -9,7 +9,7 @@ const path = require('path');
 const jwt = require('jsonwebtoken');
 var { fetchExchangeRate, fetchLastSevenDays } = require('../db');
 const QuickChart = require('quickchart-js');
-
+const { body, validationResult } = require('express-validator');
 
 AWS.config.update({
   region: 'us-west-2',
@@ -79,34 +79,127 @@ router.get('/converter', requireAuth, function (req, res) {
 })
 
 
-/* get sign up page */
-router.get('/signup', (req, res) => {
-  res.render('signup');
-});
+/*verify email*/
+router.get('/verify', (req, res) => {
+  res.render('verify');
+})
 
-router.post('/signup', (req, res) => {
-  const { email, password } = req.body; // Get email and password from the form
 
-  const attributeList = [
-    new AmazonCognitoIdentity.CognitoUserAttribute({ Name: 'email', Value: email })
-  ];
+//verify email with SES aka adding users to SES (once user signs up we can run this and get them to verify their email this is kinda awks cause it sends via AWS email ...)
+router.post('/verify-email', body('email').isEmail().normalizeEmail(), async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.render('verify', { errorMessage: 'Invalid email format'});
+  }
+  const email = req.body.email;
 
-  userPool.signUp(email, password, attributeList, null, (err, result) => {
-    if (err) {
-      console.error('Signup error:', err);
-      let errorMessage = err.message;
+  try {
+    const result = await ses.getIdentityVerificationAttributes({
+      Identities: [email]
+    }).promise();
 
-      // Check if the error is because the user already exists
-      if (err.code === 'UsernameExistsException') {
-        errorMessage = 'User already exists. Please use a different email or login.';
-      }
-      res.status(400).render('signup', { errorMessage: err.message });
+    const isVerified = result.VerificationAttributes[email]?.VerificationStatus === 'Success';
+    console.log(isVerified)
+
+
+    if (!isVerified) {
+      console.log(`${email} is not verified`);
+
+      // User has not verified their email
+      const params = {
+        EmailAddress: email
+      };
+
+      await ses.verifyEmailIdentity(params).promise();
+      console.log(`Verification email sent to ${email}`);
+      const message = "Verification email sent. Please verify your email before creating your account."
+      res.redirect(`/signup?email=${email}&message=${encodeURIComponent(message)}`);
       return;
     }
-    console.log('Signup success:', result);
-    req.session.email = email; // Store email in session
-    res.redirect('/confirm'); // Redirect to the confirmation page
-  });
+
+    //valid email in SES 
+    console.log(`${email} is already verified`);
+
+    const params = {
+      Username: email,
+      UserPoolId: process.env.COGNITO_USER_POOL_ID
+    };
+
+    const cognitoIdentityServiceProvider = new AWS.CognitoIdentityServiceProvider({ apiVersion: '2016-04-18' });
+    try {
+
+      await cognitoIdentityServiceProvider.adminGetUser(params).promise();
+      // User exists in Cognito user pool, redirect to login
+      const message = `${email} is already registered. Please log in.`;
+      return res.redirect(`/login?message=${encodeURIComponent(message)}`);
+    } catch (error) {
+      if (error.code === 'UserNotFoundException') {
+        // User does not exist in Cognito user pool, proceed with signup
+        const message = "Account creation incomplete. Please complete the sign-in process."
+        req.session.email = email;
+        return res.render('signup', { message, email: req.session.email });
+      }
+
+      console.error(`Failed to send verification email to ${email}:`, error);
+      return res.render('verify');
+    }
+  } catch (error) {
+    console.error(`Failed to send verification email to ${email}:`, error);
+    res.render('verify');
+  }
+});
+
+
+/* get sign up page */
+router.get('/signup', (req, res) => {
+  const email = req.query.email || ''
+  const message = req.query.message || ''
+  req.session.email = email
+  res.render('signup', { email, message });
+});
+
+router.post('/signup', async (req, res) => {
+  const { password } = req.body; // Get email and password from the form
+  const email = req.session.email
+  try {
+    const result = await ses.getIdentityVerificationAttributes({
+      Identities: [email]
+    }).promise();
+
+    const isVerified = result.VerificationAttributes[email]?.VerificationStatus === 'Success';
+
+    if (!isVerified) {
+      console.log(`Email ${email} is not verified`);
+      const message = 'Email is not verified. Please check your inbox and verify your email.'
+      res.status(400).render('signup', { email: req.session.email, message: '', errorMessage: message });
+      return;
+    }
+
+    const attributeList = [
+      new AmazonCognitoIdentity.CognitoUserAttribute({ Name: 'email', Value: email })
+    ];
+
+    userPool.signUp(email, password, attributeList, null, (err, result) => {
+      if (err) {
+        console.error('Signup error:', err);
+        let errorMessage = err.message;
+
+        // Check if the error is because the user already exists
+        if (err.code === 'UsernameExistsException') {
+          errorMessage = 'User already exists. Please use a different email or login.';
+        }
+        res.status(400).render('signup', { email: req.session.email, message: '', errorMessage: err.message });
+        return;
+      }
+      console.log('Signup success:', result);
+      req.session.email = email; // Store email in session
+      res.redirect('/confirm'); // Redirect to the confirmation page
+    });
+  } catch (error) {
+    console.error(`Failed to check verification status for email ${email}:`, error);
+    res.status(500).render('signup', { email: req.session.email, message: '', errorMessage: 'Try again.' });
+  }
+
 });
 
 
@@ -114,7 +207,7 @@ router.post('/signup', (req, res) => {
 /* get login page */
 router.get('/login', (req, res) => {
   const message = req.query.message;
-  res.render('login', {message: message});
+  res.render('login', { message: message });
 });
 
 router.post('/login', (req, res) => {
@@ -147,11 +240,11 @@ router.post('/login', (req, res) => {
         res.render('confirm', { email: username, errorMessage: 'Account not confirmed. Please enter the verification code sent to your email.' });
       } else if (err.code === 'NotAuthorizedException') {
         // Handle incorrect email or password
-        res.render('login', { errorMessage: 'Email or password is incorrect.', message:''});
+        res.render('login', { errorMessage: 'Email or password is incorrect.', message: '' });
       } else {
         // Handle other errors
         console.error(err);
-        res.render('login', { errorMessage: 'Login failed. Please try again.', message:'' });
+        res.render('login', { errorMessage: 'Login failed. Please try again.', message: '' });
       }
     }
   });
@@ -216,7 +309,8 @@ router.post('/getChart', async (req, res) => {
       type: 'line',
       data: {
         labels: labelsArray,
-        datasets: [{ label: currencyPair, data: dataArray, borderColor: 'rgb(144, 238, 144)', backgroundColor: 'rgba(144, 238, 144, 0.5)'
+        datasets: [{
+          label: currencyPair, data: dataArray, borderColor: 'rgb(144, 238, 144)', backgroundColor: 'rgba(144, 238, 144, 0.5)'
         },],
       },
     })
@@ -393,23 +487,8 @@ router.post('/sendEmail', async (req, res) => {
   }
 });
 
-//verify email with SES aka adding users to SES (once user signs up we can run this and get them to verify their email this is kinda awks cause it sends via AWS email ...)
-router.post('/verify-email', async (req, res) => {
-  const { email } = 'yuangelaa@icloud.com';
 
-  const params = {
-    EmailAddress: 'yuangelaa@icloud.com'
-  };
 
-  try {
-    await ses.verifyEmailIdentity(params).promise();
-    console.log(`Verification email sent to ${email}`);
-    res.status(200).send('Verification email sent successfully');
-  } catch (error) {
-    console.error(`Failed to send verification email to ${email}:`, error);
-    res.status(500).send('Failed to send verification email');
-  }
-});
 
 router.get('/session-data', (req, res) => {
   console.log(req.session);
@@ -427,33 +506,33 @@ router.get('/logout', (req, res) => {
 });
 
 
-router.get('/map', requireAuth, async(req, res) => {
-  
+router.get('/map', requireAuth, async (req, res) => {
+
   const docClient = new AWS.DynamoDB.DocumentClient();
-  
-   const params = {
+
+  const params = {
     TableName: 'location'
-};
-try {
+  };
+  try {
     const data = await docClient.scan(params).promise();
     const locations = data.Items.map(item => ({
-        name: item.name,
-        latitude: item.latitude,
-        longitude: item.longitude,
-        address: item.address
+      name: item.name,
+      latitude: item.latitude,
+      longitude: item.longitude,
+      address: item.address
     }));
 
     const locationsJson = JSON.stringify(locations);
- 
-  res.render('map', {
+
+    res.render('map', {
       mapboxAccessToken: process.env.MAPBOX_ACCESS_TOKEN,
       locations: locationsJson
-});
-  
-} catch (err) {
+    });
+
+  } catch (err) {
     console.error('Error fetching data from DynamoDB:', err);
     res.status(500).send('Error fetching location data');
-}
+  }
 });
 router.get('/testing', (req, res) => {
   res.render('testing')
