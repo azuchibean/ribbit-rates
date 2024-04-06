@@ -219,13 +219,26 @@ router.post('/getChart', async (req, res) => {
         datasets: [{ label: currencyPair, data: dataArray, borderColor: 'rgb(144, 238, 144)', backgroundColor: 'rgba(144, 238, 144, 0.5)'
         },],
       },
+      options: {
+        scales: {
+          y: {
+            min: 0,
+          }
+        },
+        legend: {
+          display: false
+        },
+        title: {
+          display: true,
+          text: "Recent Trends"
+        }
+      }
     })
-    .setWidth(425)
-    .setHeight(325)
+    .setWidth(420)
+    .setHeight(340)
     .setBackgroundColor('transparent');
 
   const chartUrl = myChart.getUrl();
-  // console.log(chartUrl);
 
   res.send(chartUrl)
 
