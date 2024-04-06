@@ -15,7 +15,7 @@ document.getElementById("fetchButton").addEventListener("click", async () => {
 
     document.getElementById(
       "result"
-    ).innerText = `Exchange rate from ${fromCurrency} to ${toCurrency}: ${exchangeRate}`;
+    ).innerText = `Today's exchange rate from ${fromCurrency} to ${toCurrency}: ${exchangeRate}`;
     document.getElementById("result").style.color = "black"
   } catch (error) {
     console.error("Error fetching exchange rate:", error);
@@ -39,8 +39,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     try {
       const response = await axios.post("/getLastWeekData", { selectedOption1, selectedOption2 })
-      updateTable(response.data.exchangeRates)
-      getChart(response.data.exchangeRates)
+      const rates = response.data.exchangeRates
+      console.log(rates)
+      updateTable(rates.slice(1))
+      getChart(rates)
 
     } catch (error) {
       console.log(error)
@@ -95,9 +97,6 @@ async function getChart(data) {
     const response = await axios.post('/getChart', {dataArray, labelsArray, currencyPair: currentCurrencyPair} );
     const chartUrl = response.data;
 
-    const header = document.createElement('h2')
-    header.innerHTML = "Recent Trends"
-
     // Create an image element and set its source to the chart URL
     const imgElement = document.createElement('img');
     imgElement.src = chartUrl;
@@ -105,7 +104,6 @@ async function getChart(data) {
     // Append the image element to the div with id "graph"
     const graphDiv = document.getElementById('historicalGraph');
     graphDiv.innerHTML = ''; // Clear previous content
-    graphDiv.append(header)
     graphDiv.appendChild(imgElement);
 
   } catch (error) {
