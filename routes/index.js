@@ -469,39 +469,6 @@ router.delete('/profile/:alertId', async (req, res, next) => {
   }
 });
 
-//via SES 
-router.post('/sendEmail', async (req, res) => {
-  const userCurrencyPair = 'USD/CAD';
-  const targetRate = 1.25;
-  const recipient = 'angelayu8800@gmail.com';
-  const subject = 'Target rate hit!';
-  const message = `The target rate of ${targetRate} for ${userCurrencyPair} has been hit!`;
-
-  const params = {
-    Destination: {
-      ToAddresses: [recipient]
-    },
-    Message: {
-      Body: {
-        Text: { Data: message }
-      },
-      Subject: { Data: subject }
-    },
-    Source: 'ribbit.appnotifs@gmail.com' //THIS IS OUR WEB APP'S EMAIL (ask angela for the password)
-  };
-
-  try {
-    const data = await ses.sendEmail(params).promise();
-    console.log('Email sent:', data);
-    res.send({ message: 'Email sent successfully' });
-  } catch (err) {
-    console.error('Email sending failed:', err);
-    res.status(500).send({ message: 'Failed to send email' });
-  }
-});
-
-
-
 
 router.get('/session-data', (req, res) => {
   console.log(req.session);
@@ -547,9 +514,7 @@ router.get('/map', requireAuth, async (req, res) => {
     res.status(500).send('Error fetching location data');
   }
 });
-router.get('/testing', (req, res) => {
-  res.render('testing')
-})
+
 
 
 module.exports = router;
