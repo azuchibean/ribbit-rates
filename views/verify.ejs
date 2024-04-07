@@ -1,4 +1,4 @@
-<%- include('header_not_loggedin.ejs', { title: 'Confirm' }) %>
+<%- include('header_not_loggedin.ejs', { title: 'Verify' }) %>
 
     <style>
         .container {
@@ -34,12 +34,11 @@
     <body>
 
         <div class="container">
-            <h2 class="mb-4">Confirm Account</h2>
-            <form action="/confirm" method="post">
-                <input type="hidden" name="username" value="<%= email %>"> <!-- Hidden email field -->
+            <h2 class="mb-4">Signup</h2>
+            <form action="/verify-email" method="post">
                 <div class="mb-3">
-                    <label for="code" class="form-label">Verification Code:</label>
-                    <input type="text" class="form-control" id="code" name="code" required>
+                    <label for="email" class="form-label">Enter your email address:</label>
+                    <input type="text" class="form-control" name="email" required>
                 </div>
                 <button type="submit" class="btn btn-green">Confirm</button>
             </form>

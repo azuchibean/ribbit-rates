@@ -1,10 +1,22 @@
 <%- include('header.ejs', { title: 'ribbit rates' }) %>
+  <style>
+    /* Green theme */
+    .btn-green {
+      background-color: #4CAF50;
+      color: white;
+      border: solid transparent;
+    }
 
-  <!--Find better solution to this later-->
-  <br>
-  <br>
-  <br>
-  <div class="container mt-6">
+    .btn-green:hover {
+      border: solid #4CAF50;
+    }
+
+    #contentContainer {
+      margin-top: 15vh;
+    }
+  </style>
+
+  <div class="container mt-6" id="contentContainer">
     <div class="row">
       <div class="col-auto">
         <h2>Current Exchange Rate</h2>
@@ -28,10 +40,10 @@
             <% }); %>
         </select>
         <br>
-        <button type="button" class="btn btn-success" id="fetchButton">Find exchange rate</button>
+        <button type="button" class="btn btn-green" id="fetchButton">Find exchange rate</button>
         <div id="result">spook</div>
         <div class="col">
-          <h2>Historical Rates</h2>
+          <h2>Recent Rates</h2>
           <table id="dataTable">
             <thead>
               <tr>
@@ -56,4 +68,4 @@
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script type="module" src="/javascript/forex.js"></script>
 
-<%- include('footer.ejs') %>
+  <%- include('footer.ejs') %>

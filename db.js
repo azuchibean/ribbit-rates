@@ -23,7 +23,7 @@ const fetchExchangeRate = async (fromCurrency, toCurrency) => {
   }
 };
 
-// Gets last seven dates from DynamoDB
+// Gets last weeks data from DynamoDB
 const fetchLastSevenDays = async (fromCurrency, toCurrency) => {
   const params = {
     TableName: Table,
@@ -32,7 +32,7 @@ const fetchLastSevenDays = async (fromCurrency, toCurrency) => {
       ":currencyPair": `${fromCurrency}:${toCurrency}`,
     },
     ScanIndexForward: false, // Get items in descending order of date
-    Limit: 7, // Limit the result to 7 items (the latest date)
+    Limit: 8, // Limit the result to 7 items (the latest date)
   };
 
   try {

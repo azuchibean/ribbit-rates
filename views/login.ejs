@@ -17,13 +17,24 @@
             color: red;
             font-weight: bold;
         }
+
+        /* Green theme */
+        .btn-green {
+            background-color: #4CAF50;
+            color: white;
+            border: solid transparent;
+        }
+
+        .btn-green:hover {
+            border: solid #4CAF50;
+        }
     </style>
 
     <div class="container">
         <h2 class="mb-4">Login</h2>
         <% if (message) { %>
             <div class="alert alert-success" role="alert">
-              <%= message %>
+                <%= message %>
             </div>
         <% } %>
         <form action="/login" method="post">
@@ -44,4 +55,4 @@
         <a href="/forgot-password">Forgot Password?</a>
     </div>
 
-<%- include('footer_not_loggedin.ejs') %>
+    <%- include('footer_not_loggedin.ejs') %>
