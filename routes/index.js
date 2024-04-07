@@ -455,9 +455,72 @@ try {
     res.status(500).send('Error fetching location data');
 }
 });
+
+
 router.get('/testing', (req, res) => {
   res.render('testing')
 })
+
+
+
+/*get foget password page*/
+router.get('/forgot-password', (req, res) => {
+  res.render('forgot_password');
+});
+
+
+/* handle foget password */
+router.post('/forgot-password', (req, res) => {
+  const { email } = req.body;
+
+  const userData = {
+      Username: email,
+      Pool: userPool
+  };
+
+  const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+
+  cognitoUser.forgotPassword({
+      onSuccess: () => {
+          res.render('reset-password', { email: email, message: 'Please check your email for the verification code.' });
+      },
+      onFailure: (err) => {
+          console.error(err);
+          res.render('forgot_password', { errorMessage: 'Failed to initiate password reset. Please try again.' });
+      }
+  });
+});
+
+/* get reset password page */
+
+router.get('/reset-password', (req, res) => {
+  res.render('reset-password', { email: '', message: '' });
+});
+
+
+/*  reset password logic */
+
+router.post('/reset-password', (req, res) => {
+  const { email, verificationCode, newPassword } = req.body;
+
+  const userData = {
+      Username: email,
+      Pool: userPool
+  };
+
+  const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+
+  cognitoUser.confirmPassword(verificationCode, newPassword, {
+      onSuccess: () => {
+          res.render('login', { message: 'Password reset successfully. You can now log in with your new password.' });
+      },
+      onFailure: (err) => {
+        console.error("Reset password error:", err);
+        res.render('reset-password', { email: email, errorMessage: 'Verification code is incorrect or password is invalid.' });
+      }
+  });
+});
+
 
 
 module.exports = router;
