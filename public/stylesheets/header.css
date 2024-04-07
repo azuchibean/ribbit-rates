@@ -141,13 +141,6 @@ body {
     margin-bottom: 3px;
 }
 
-/* .menu-email{
-    margin-left: 65px; 
-    margin-top: -20px;
-    color: grey;
-} */
-
-
 .menu-home::before {
     content: "";
     display: inline-block;
@@ -189,7 +182,7 @@ body {
 }
 
 
-/**button**/
+/**logout button**/
 .menu-logout {
     display: flex;
     align-items: center;
