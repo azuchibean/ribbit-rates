@@ -1,3 +1,4 @@
+/**Automatically converts input amount to another currency */
 document.addEventListener('DOMContentLoaded', function () {
     const fromCurrency = document.getElementById('exchange-from');
     const toCurrency = document.getElementById('exchange-to');

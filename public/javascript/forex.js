@@ -1,3 +1,4 @@
+// Button displays today's exchange rate
 document.getElementById("fetchButton").addEventListener("click", async () => {
   const fromCurrency = document.getElementById("exchange-from").value;
   const toCurrency = document.getElementById("exchange-to").value;
@@ -33,6 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
   fromCurrency.addEventListener('change', fetchData);
   toCurrency.addEventListener('change', fetchData);
 
+  // Fetches new data
   async function fetchData() {
     const selectedOption1 = fromCurrency.value;
     const selectedOption2 = toCurrency.value;
@@ -50,6 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   }
 
+  // Dynamically updates table
   function updateTable(data) {
     const tableBody = document.querySelector('#dataTable tbody');
     tableBody.innerHTML = ''; // Clear existing table data

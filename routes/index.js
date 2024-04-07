@@ -1,7 +1,6 @@
 require('dotenv').config();
 var express = require('express');
 var router = express.Router();
-const axios = require('axios');
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 const AWS = require('aws-sdk');
 const fs = require('fs');
@@ -283,7 +282,7 @@ router.post('/confirm', (req, res) => {
   });
 });
 
-// POST for button
+// Get current exchange rate for select currencies
 router.post('/query', async (req, res) => {
   const fromCurrency = req.body.fromCurrency;
   const toCurrency = req.body.toCurrency;
@@ -293,7 +292,7 @@ router.post('/query', async (req, res) => {
   res.json({ exchangeRate });
 });
 
-// POST for table
+// Get currency data for last seven days for select currencies
 router.post('/getLastWeekData', async (req, res) => {
   const fromCurrency = req.body.selectedOption1;
   const toCurrency = req.body.selectedOption2;
@@ -303,6 +302,7 @@ router.post('/getLastWeekData', async (req, res) => {
   res.json({ exchangeRates });
 });
 
+// Create chart for recent trends and return it
 router.post('/getChart', async (req, res) => {
   const dataArray = req.body.dataArray;
   const labelsArray = req.body.labelsArray;
@@ -493,8 +493,6 @@ router.get('/logout', (req, res) => {
 
 /* Get location from database and display on map */
 router.get('/map', requireAuth, async (req, res) => {
-
-  const docClient = new AWS.DynamoDB.DocumentClient();
 
   const params = {
     TableName: 'location'
