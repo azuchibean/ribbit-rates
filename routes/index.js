@@ -158,6 +158,7 @@ router.get('/signup', (req, res) => {
   res.render('signup', { email, message });
 });
 
+/* Process signup account and verfication */
 router.post('/signup', async (req, res) => {
   const { password } = req.body; // Get email and password from the form
   const email = req.session.email
@@ -210,6 +211,7 @@ router.get('/login', (req, res) => {
   res.render('login', { message: message });
 });
 
+/* login with user and direct to main page */
 router.post('/login', (req, res) => {
   const { username, password } = req.body;
 
@@ -257,6 +259,7 @@ router.get('/confirm', (req, res) => {
   res.render('confirm', { email: email });
 });
 
+/* processs confirmation of account */
 router.post('/confirm', (req, res) => {
   const { username, code } = req.body; // Username is now passed as a hidden field
 
@@ -375,6 +378,7 @@ router.get('/profile', requireAuth, function (req, res, next) {
   })
 })
 
+
 router.post('/profile', async (req, res, next) => {
   const { fromCurrency, toCurrency, rateExchange, alertId } = req.body;
 
@@ -475,6 +479,7 @@ router.get('/session-data', (req, res) => {
   res.send('Session data logged in the console.');
 });
 
+/* Logout user */
 router.get('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {
@@ -486,6 +491,7 @@ router.get('/logout', (req, res) => {
 });
 
 
+/* Get location from database and display on map */
 router.get('/map', requireAuth, async (req, res) => {
 
   const docClient = new AWS.DynamoDB.DocumentClient();
@@ -522,13 +528,13 @@ router.get('/testing', (req, res) => {
 
 
 
-/*get foget password page*/
+/* Foget password page*/
 router.get('/forgot-password', (req, res) => {
   res.render('forgot_password');
 });
 
 
-/* handle foget password */
+/* Send verification code to user email */
 router.post('/forgot-password', (req, res) => {
   const { email } = req.body;
 
@@ -541,7 +547,7 @@ router.post('/forgot-password', (req, res) => {
 
   cognitoUser.forgotPassword({
       onSuccess: () => {
-          res.render('reset-password', { email: email, message: 'Please check your email for the verification code.' });
+          res.render('reset_password', { email: email, message: 'Please check your email for the verification code.' });
       },
       onFailure: (err) => {
           console.error(err);
@@ -550,15 +556,14 @@ router.post('/forgot-password', (req, res) => {
   });
 });
 
-/* get reset password page */
+/* Reset password page */
 
 router.get('/reset-password', (req, res) => {
-  res.render('reset-password', { email: '', message: '' });
+  res.render('reset_password', { email: '', message: '' });
 });
 
 
-/*  reset password logic */
-
+/* Replace password in cognito */
 router.post('/reset-password', (req, res) => {
   const { email, verificationCode, newPassword } = req.body;
 
@@ -575,7 +580,7 @@ router.post('/reset-password', (req, res) => {
       },
       onFailure: (err) => {
         console.error("Reset password error:", err);
-        res.render('reset-password', { email: email, errorMessage: 'Verification code is incorrect or password is invalid.' });
+        res.render('reset_password', { email: email, errorMessage: 'Verification code is incorrect or password is invalid.' });
       }
   });
 });

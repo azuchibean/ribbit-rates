@@ -1,13 +1,8 @@
 <%- include('header.ejs', { title: 'Forex Locations' }) %>
 
-<style>
-    .location-name {
-    font-family: Arial, sans-serif;
-    font-size: 12px;
-    font-weight: bold;
-}
 
-</style>
+
+<!--mapbox-->
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css" rel="stylesheet">
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js"></script>
     
@@ -27,13 +22,13 @@
     // Add navigation control (zoom in/out)
     map.addControl(new mapboxgl.NavigationControl());
 
+      // convert locations to a json
     var locationsData = document.getElementById('locationsData').textContent;
     var forexLocations = JSON.parse(locationsData.replace(/\\/g, ''));
     console.log(forexLocations);
 
 
-
-
+   
     map.on('load', function () {
         // Check if the geolocation API is available
         if (navigator.geolocation) {
@@ -76,6 +71,8 @@
         }
     });
 
+
+    // calculate distance to current location
     function calculateDistance(lat1, lon1, lat2, lon2) {
         var R = 6371;
         var dLat = (lat2 - lat1) * Math.PI / 180;
@@ -87,6 +84,7 @@
         var d = R * c;
         return d;
     }
+    
 </script>
 
 

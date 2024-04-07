@@ -1,31 +1,7 @@
 <%- include('header_not_loggedin.ejs', { title: 'Signup' }) %>
-    <style>
-        .container {
-            max-width: 400px;
-            margin-top: 100px;
-        }
-
-        .form-label {
-            margin-bottom: 0.5rem;
-        }
-
-        .form-control {
-            margin-bottom: 1rem;
-        }
-
-        /* Green theme */
-        .btn-green {
-            background-color: #4CAF50;
-            color: white;
-            border: solid transparent;
-        }
-
-        .btn-green:hover {
-            border: solid #4CAF50;
-        }
-    </style>
-
-    <div class="container">
+    
+<!--signup form-->
+    <div class="signup-container">
         <h2 class="mb-4">Signup</h2>
         <% if (message) { %>
             <div class="alert alert-success" role="alert">
@@ -46,6 +22,7 @@
 
                     <button type="submit" class="btn btn-green">Create Account</button>
 
+                    <!--display error message-->
                     <% if (typeof errorMessage !=='undefined' && errorMessage) { %>
                         <div class="error-message" style="color: red;">* <%= errorMessage %>
                         </div>

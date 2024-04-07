@@ -1,42 +1,15 @@
 <%- include('header_not_loggedin.ejs', { title: 'Login' }) %>
-    <style>
-        .container {
-            max-width: 400px;
-            margin-top: 100px;
-        }
 
-        .form-label {
-            margin-bottom: 0.5rem;
-        }
-
-        .form-control {
-            margin-bottom: 1rem;
-        }
-
-        .error-message {
-            color: red;
-            font-weight: bold;
-        }
-
-        /* Green theme */
-        .btn-green {
-            background-color: #4CAF50;
-            color: white;
-            border: solid transparent;
-        }
-
-        .btn-green:hover {
-            border: solid #4CAF50;
-        }
-    </style>
-
-    <div class="container">
+     
+    <div class="login-container">
         <h2 class="mb-4">Login</h2>
+             <!--display message-->
         <% if (message) { %>
             <div class="alert alert-success" role="alert">
                 <%= message %>
             </div>
         <% } %>
+        <!--login form-->
         <form action="/login" method="post">
             <div class="mb-3">
                 <label for="username" class="form-label">Email:</label>
@@ -46,12 +19,14 @@
                 <label for="password" class="form-label">Password:</label>
                 <input type="password" class="form-control" id="password" name="password" required>
             </div>
-            <button type="submit" class="btn btn-success">Login</button>
+            <button type="submit" class="btn btn-green">Login</button>
+            <!--display error message-->
             <% if (typeof errorMessage !=='undefined' && errorMessage) { %>
                 <div class="error-message">* <%= errorMessage %>
                 </div>
                 <% } %>
         </form>
+        <!--link to forget password page-->
         <a href="/forgot-password">Forgot Password?</a>
     </div>
 

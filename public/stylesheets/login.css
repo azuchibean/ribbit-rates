@@ -1,0 +1,70 @@
+
+ /* Green theme */
+ .btn-green {
+    background-color: #4CAF50;
+    color: white;
+    border: solid transparent;
+}
+
+.btn-green:hover {
+    border: solid #4CAF50;
+}
+
+ /* login container */
+.login-container {
+    max-width: 400px;
+    margin-top: 100px;
+    margin-bottom: 100px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+ /* forget password container */
+.forget-container {
+    max-width: 400px;
+    margin-top: 100px;
+    margin-bottom: 100px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+ /* signup container */
+
+.signup-container {
+    max-width: 400px;
+    margin-top: 100px;
+    margin-bottom: 100px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+ /* reset password container */
+.reset-container {
+    max-width: 400px;
+    margin-top: 100px;
+    margin-bottom: 100px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+ /* verify account container */
+.verify-container {
+    max-width: 400px;
+    margin-top: 100px;
+    margin-bottom: 100px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.form-label {
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    margin-bottom: 1rem;
+}
+
+.error-message {
+    color: red;
+    font-weight: bold;
+}
