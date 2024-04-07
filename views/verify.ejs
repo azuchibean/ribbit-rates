@@ -1,5 +1,4 @@
 <%- include('header_not_loggedin.ejs', { title: 'Verify' }) %>
-
     
     <body>
         <!--verification form-->
@@ -12,6 +11,7 @@
                 </div>
                 <button type="submit" class="btn btn-green">Confirm</button>
             </form>
+            
             <!--display error message-->
             <% if (typeof errorMessage !=='undefined' ) { %>
                 <p class="error-message">
@@ -19,6 +19,5 @@
                 </p>
                 <% } %>
         </div>
-    </body>
-
-    </html>
+ 
+<%- include('footer_not_loggedin.ejs') %>

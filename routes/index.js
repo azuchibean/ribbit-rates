@@ -10,6 +10,8 @@ const jwt = require('jsonwebtoken');
 var { fetchExchangeRate, fetchLastSevenDays } = require('../db');
 const QuickChart = require('quickchart-js');
 const { body, validationResult } = require('express-validator');
+const ses = new AWS.SES({ apiVersion: '2010-12-01' });
+const docClient = new AWS.DynamoDB.DocumentClient();
 
 AWS.config.update({
   region: 'us-west-2',
@@ -17,7 +19,6 @@ AWS.config.update({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 });
 
-const ses = new AWS.SES({ apiVersion: '2010-12-01' });
 
 const poolData = {
   UserPoolId: process.env.COGNITO_USER_POOL_ID,
@@ -26,7 +27,7 @@ const poolData = {
 
 const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
 
-//autheneticates user based on their accesstoken given on cognito login 
+//authenticates user based on their accesstoken given on cognito login 
 function requireAuth(req, res, next) {
   try {
     const accessToken = req.session.user.accessToken;
@@ -72,6 +73,7 @@ router.get('/main', requireAuth, function (req, res, next) {
   res.render('main', { currencies: data.currencies });
 });
 
+//get converter tool page
 router.get('/converter', requireAuth, function (req, res) {
   const filePath = path.join(__dirname, '..', 'public', 'currencies.json');
   const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
@@ -79,21 +81,21 @@ router.get('/converter', requireAuth, function (req, res) {
 })
 
 
-/*verify email*/
+//get verify email page 
 router.get('/verify', (req, res) => {
   res.render('verify');
 })
 
-
-//verify email with SES aka adding users to SES (once user signs up we can run this and get them to verify their email this is kinda awks cause it sends via AWS email ...)
+//verify email with SES 
 router.post('/verify-email', body('email').isEmail().normalizeEmail(), async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.render('verify', { errorMessage: 'Invalid email format'});
+    return res.render('verify', { errorMessage: 'Invalid email format' });
   }
   const email = req.body.email;
 
   try {
+    //check if the email is already an identity in SES
     const result = await ses.getIdentityVerificationAttributes({
       Identities: [email]
     }).promise();
@@ -101,23 +103,23 @@ router.post('/verify-email', body('email').isEmail().normalizeEmail(), async (re
     const isVerified = result.VerificationAttributes[email]?.VerificationStatus === 'Success';
     console.log(isVerified)
 
-
     if (!isVerified) {
       console.log(`${email} is not verified`);
 
-      // User has not verified their email
       const params = {
         EmailAddress: email
       };
 
+      // User has not verified their email so send them a verification email 
       await ses.verifyEmailIdentity(params).promise();
       console.log(`Verification email sent to ${email}`);
+      //redirect them to signup page to continue creating their account
       const message = "Verification email sent. Please verify your email before creating your account."
       res.redirect(`/signup?email=${email}&message=${encodeURIComponent(message)}`);
       return;
     }
 
-    //valid email in SES 
+    //valid identity in SES 
     console.log(`${email} is already verified`);
 
     const params = {
@@ -125,21 +127,22 @@ router.post('/verify-email', body('email').isEmail().normalizeEmail(), async (re
       UserPoolId: process.env.COGNITO_USER_POOL_ID
     };
 
+    //check if they exist in user pool 
     const cognitoIdentityServiceProvider = new AWS.CognitoIdentityServiceProvider({ apiVersion: '2016-04-18' });
     try {
-
       await cognitoIdentityServiceProvider.adminGetUser(params).promise();
       // User exists in Cognito user pool, redirect to login
       const message = `${email} is already registered. Please log in.`;
       return res.redirect(`/login?message=${encodeURIComponent(message)}`);
     } catch (error) {
       if (error.code === 'UserNotFoundException') {
-        // User does not exist in Cognito user pool, proceed with signup
+        // User does not exist in Cognito user pool, proceed with signup process
         const message = "Account creation incomplete. Please complete the sign-in process."
         req.session.email = email;
         return res.render('signup', { message, email: req.session.email });
       }
 
+      //failed to send verification email, redirect to verify page 
       console.error(`Failed to send verification email to ${email}:`, error);
       return res.render('verify');
     }
@@ -202,7 +205,6 @@ router.post('/signup', async (req, res) => {
   }
 
 });
-
 
 
 /* get login page */
@@ -352,9 +354,6 @@ router.get('/profile', requireAuth, function (req, res, next) {
   const filePath = path.join(__dirname, '..', 'public', 'currencies.json');
   const currencies = JSON.parse(fs.readFileSync(filePath, 'utf8')).currencies;
 
-  //need to retrieve user's rate alerts from db
-  const docClient = new AWS.DynamoDB.DocumentClient();
-
   const params = {
     TableName: "Users",
     KeyConditionExpression: '#u = :u',
@@ -366,11 +365,13 @@ router.get('/profile', requireAuth, function (req, res, next) {
     }
   };
 
+  //need to retrieve user's rate alerts from db
   docClient.query(params, function (err, data) {
     if (err) {
       console.error("Unable to query. Error:", JSON.stringify(err, null, 2));
       res.status(500).send("Error retrieving rate alerts");
     } else {
+      //render rate alerts in profile page 
       const rateAlerts = data.Items || [];
       console.log(data.Items)
       res.render('profile', { email: email, rateAlerts: rateAlerts, currencies: currencies });
@@ -378,13 +379,11 @@ router.get('/profile', requireAuth, function (req, res, next) {
   })
 })
 
-
+//POST new rate alert
 router.post('/profile', async (req, res, next) => {
   const { fromCurrency, toCurrency, rateExchange, alertId } = req.body;
 
   const email = req.session.user.email;
-
-  const docClient = new AWS.DynamoDB.DocumentClient();
 
   const putParams = {
     TableName: 'Users',
@@ -398,6 +397,7 @@ router.post('/profile', async (req, res, next) => {
   };
 
   try {
+    //store it in user's table in dynamodb
     await docClient.put(putParams).promise();
     console.log('Rate alert saved successfully');
     res.redirect('/profile');
@@ -407,12 +407,11 @@ router.post('/profile', async (req, res, next) => {
   }
 });
 
+//POST that checks for duplicate rate alerts 
 router.post('/check-duplicate', async (req, res) => {
   const email = req.session.user.email;
 
   const { fromCurrency, toCurrency, rateExchange } = req.body;
-
-  const docClient = new AWS.DynamoDB.DocumentClient();
 
   const paramsQuery = {
     TableName: 'Users',
@@ -426,10 +425,10 @@ router.post('/check-duplicate', async (req, res) => {
   };
 
   try {
+    // Check if the new entry already exists
     const data = await docClient.query(paramsQuery).promise();
     const existingEntries = data.Items;
 
-    // Check if the new entry already exists
     const isDuplicate = existingEntries.some(entry =>
       entry.from === fromCurrency &&
       entry.to === toCurrency &&
@@ -449,11 +448,10 @@ router.post('/check-duplicate', async (req, res) => {
   }
 });
 
+//DELETE the rate alert by the unique alertId
 router.delete('/profile/:alertId', async (req, res, next) => {
   const { alertId } = req.params;
   const email = req.session.user.email;
-
-  const docClient = new AWS.DynamoDB.DocumentClient();
 
   const params = {
     TableName: 'Users',
@@ -464,6 +462,7 @@ router.delete('/profile/:alertId', async (req, res, next) => {
   };
 
   try {
+    //delete rate alert from table
     await docClient.delete(params).promise();
     console.log(`Alert with id ${alertId} deleted successfully`);
     res.sendStatus(200); // Send a success response
@@ -473,7 +472,7 @@ router.delete('/profile/:alertId', async (req, res, next) => {
   }
 });
 
-
+//retrieve user's session data for testing purposes 
 router.get('/session-data', (req, res) => {
   console.log(req.session);
   res.send('Session data logged in the console.');
@@ -481,6 +480,7 @@ router.get('/session-data', (req, res) => {
 
 /* Logout user */
 router.get('/logout', (req, res) => {
+  //destroy the session
   req.session.destroy((err) => {
     if (err) {
       console.error('Error destroying session:', err);
@@ -522,11 +522,6 @@ router.get('/map', requireAuth, async (req, res) => {
 });
 
 
-router.get('/testing', (req, res) => {
-  res.render('testing')
-})
-
-
 
 /* Foget password page*/
 router.get('/forgot-password', (req, res) => {
@@ -539,20 +534,20 @@ router.post('/forgot-password', (req, res) => {
   const { email } = req.body;
 
   const userData = {
-      Username: email,
-      Pool: userPool
+    Username: email,
+    Pool: userPool
   };
 
   const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
 
   cognitoUser.forgotPassword({
-      onSuccess: () => {
-          res.render('reset_password', { email: email, message: 'Please check your email for the verification code.' });
-      },
-      onFailure: (err) => {
-          console.error(err);
-          res.render('forgot_password', { errorMessage: 'Failed to initiate password reset. Please try again.' });
-      }
+    onSuccess: () => {
+      res.render('reset_password', { email: email, message: 'Please check your email for the verification code.' });
+    },
+    onFailure: (err) => {
+      console.error(err);
+      res.render('forgot_password', { errorMessage: 'Failed to initiate password reset. Please try again.' });
+    }
   });
 });
 
@@ -568,20 +563,20 @@ router.post('/reset-password', (req, res) => {
   const { email, verificationCode, newPassword } = req.body;
 
   const userData = {
-      Username: email,
-      Pool: userPool
+    Username: email,
+    Pool: userPool
   };
 
   const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
 
   cognitoUser.confirmPassword(verificationCode, newPassword, {
-      onSuccess: () => {
-          res.render('login', { message: 'Password reset successfully. You can now log in with your new password.' });
-      },
-      onFailure: (err) => {
-        console.error("Reset password error:", err);
-        res.render('reset_password', { email: email, errorMessage: 'Verification code is incorrect or password is invalid.' });
-      }
+    onSuccess: () => {
+      res.render('login', { message: 'Password reset successfully. You can now log in with your new password.' });
+    },
+    onFailure: (err) => {
+      console.error("Reset password error:", err);
+      res.render('reset_password', { email: email, errorMessage: 'Verification code is incorrect or password is invalid.' });
+    }
   });
 });
 
